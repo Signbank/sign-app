@@ -1,0 +1,17 @@
+### Python ###
+__pycache__/
+
+# virtual environment
+env/
+
+### Django ###
+*.log
+*.pot
+*.pyc
+
+### Database ###
+*.db
+*.sqlite3
+
+### IDE ###
+.idea
