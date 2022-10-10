@@ -5,7 +5,7 @@ __pycache__/
 env/
 
 ### Django ###
-SingApp/settings.py
+SignApp/settings.py
 *.log
 *.pot
 *.pyc
