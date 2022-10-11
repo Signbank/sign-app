@@ -1,15 +1,20 @@
+"""
+Django settings file.
+The SECRET_KEY is stored in a .env file in the same folder as this file
+"""
+import os
+
 from pathlib import Path
 
 from dotenv import load_dotenv
 load_dotenv()
 
-import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Check if is a running Github action
-if(os.environ.get('GITHUB_ACTIONS')):
+if os.environ.get('GITHUB_ACTIONS'):
     SECRET_KEY = ''
 else:
     SECRET_KEY = os.environ['SECRET_KEY']
