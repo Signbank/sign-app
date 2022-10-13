@@ -3,7 +3,7 @@ name: Pylint
 on: [push]
 
 env:
-  DJANGO_SETTINGS_MODULE: signapp
+  DJANGO_SETTINGS_MODULE: signapp.settings
   PYTHONPATH: /home/tcunnen/Documents/SignApp
 
 jobs:
