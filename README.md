@@ -1,3 +1,5 @@
+[![Code coverage](https://github.com/Signbank/sign-app/actions/workflows/coverage.yml/badge.svg)](https://github.com/Signbank/sign-app/actions/workflows/coverage.yml)
+[![Pylint](https://github.com/Signbank/sign-app/actions/workflows/pylint.yml/badge.svg)](https://github.com/Signbank/sign-app/actions/workflows/pylint.yml)
 # Sign App
 
 ## About the Project
