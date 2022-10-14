@@ -4,7 +4,7 @@
 
 ## About the Project
 
-The sign app is a free an open-source public interface for the [Global Signbank](https://github.com/Signbank/Global-signbank). Which can be used to find signs and learn a sign language.
+The sign app is a free and open-source public interface for the [Global Signbank](https://github.com/Signbank/Global-signbank). It can be used to find signs and learn a sign language.
 
 ## Documentation
 
