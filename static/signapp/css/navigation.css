@@ -29,7 +29,12 @@
   padding: 10px;
 }
 
-
 .content {
-  padding-top: 60px;
+  margin-top: 150px;
+}
+
+@media only screen and (min-width: 1200px) {
+  .content {
+    margin-top: 60px;
+  }
 }

@@ -13,9 +13,10 @@
     {% block sidebar %}
     <nav class="navbar navbar-dark bg-dark fixed-top">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">Sign App</a>
-        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-          <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
+        <meta name="viewport" content"width=device-width, initial-scale=1">
+        <a class="navbar-brand" href="{% url 'index' %}">Sign App</a>
+        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" action="{% url 'index' %}" method="get">
+          <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." name="q" aria-label="Search">
         </form>
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
           <span class="navbar-toggler-icon"></span>
@@ -40,9 +41,9 @@
     </nav>
     {% endblock %}
 
-    <div class="content">
+    <main class="content">
     {% block content %}
     {% endblock %}
-    </div>
+    </main>
   </body>  
 </html>  
