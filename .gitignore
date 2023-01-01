@@ -15,6 +15,9 @@ env/
 *.db
 *.sqlite3
 
+# Data
+Data/
+
 # Miscellaneous
 *.class
 *.lock
