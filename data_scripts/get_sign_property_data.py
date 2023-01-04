@@ -39,14 +39,14 @@ def get_all_translations(conn):
     return dict
 
 
-def set_spoken_value(item, dictionary, spoken_value):
-    if item not in dictionary:
-        dictionary[item] = spoken_value
+def set_spoken_value(key, item, dictionary, spoken_value):
+    if key not in dictionary:
+        dictionary[key] = item
         return
 
-    current_value = dictionary[item]
+    current_value = dictionary[key][0]
     if current_value < spoken_value:
-        dictionary[item] = spoken_value
+        dictionary[key][0] = spoken_value
 
 
 if __name__ == '__main__':
@@ -64,6 +64,7 @@ if __name__ == '__main__':
     locations = {}
     movement = {}
     handshapes = {}
+    complete_dic = {}
 
     try:
         conn = sqlite3.connect(db_file)
@@ -85,9 +86,8 @@ if __name__ == '__main__':
                     id = translations[key]
                     gloss = glosses[id]
 
-                    set_spoken_value(gloss[1], locations, spoken_amount)
-                    set_spoken_value(gloss[2], movement, spoken_amount)
-                    set_spoken_value(gloss[3], handshapes, spoken_amount)
+                    item = [spoken_amount, gloss[1], gloss[2], gloss[3]]
+                    set_spoken_value(id, item, complete_dic, spoken_amount)
 
                 except KeyError:
                     count += 1
@@ -99,6 +99,5 @@ if __name__ == '__main__':
             conn.close()
 
             output_file = open("sign_property_data.txt", "w")
-            data = [locations, movement, handshapes]
-            output_file.write(json.dumps(data))
+            output_file.write(json.dumps(complete_dic))
             output_file.close()
