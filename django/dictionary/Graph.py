@@ -1,4 +1,5 @@
 import json
+import numpy as np
 
 
 class Graph:
@@ -6,13 +7,42 @@ class Graph:
     MOVEMENT = 1
     HANDSHAPE = 2
 
-    def __init__(self, file_string):
-        self.create_graph_from_file(file_string)
+    def __init__(self):
+
         self.nodes = []
+        self.location_nodes = []
+        self.movement_nodes = []
+        self.handshape_nodes = []
 
     def create_graph_from_file(self, file_string):
+
         file = open(file_string, 'r')
-        properties = json.load(file)
+        dic_of_properties = json.load(file)
+
+        for item in dic_of_properties.values():
+            weight = item[0]
+            location = item[1]
+            movement = item[2]
+            handshape = item[3]
+
+            loc_node = Node(location, self.LOCATION)
+            mov_node = Node(movement, self.MOVEMENT)
+            hand_node = Node(handshape, self.HANDSHAPE)
+            
+            loc_node = self.add_node(loc_node)
+            mov_node = self.add_node(mov_node)
+            hand_node = self.add_node(hand_node)
+
+            loc_node.add_edge(Edge(mov_node, weight))
+            loc_node.add_edge(Edge(hand_node, weight))
+
+            mov_node.add_edge(Edge(loc_node, weight))
+            mov_node.add_edge(Edge(hand_node, weight))
+
+            hand_node.add_edge(Edge(loc_node, weight))
+            hand_node.add_edge(Edge(mov_node, weight))
+
+        self.nodes = sorted(self.nodes)
 
     def add_node(self, new_node):
         for node in self.nodes:
@@ -22,21 +52,43 @@ class Graph:
         self.nodes.append(new_node)
         return new_node
 
-    def search(self, first_input, second_input):
+    def pick_best_set(self):
+        location = []
+        movement = []
+        handshapes = []
+
         for node in self.nodes:
-            if node == first_input:
+            match node.type:
+                case self.LOCATION:
+                    location += [x.weight for x in node.edges]
 
-                if second_input is not None:
-                    for edge in node.edges:
-                        if edge.node == second_input:
-                            return sorted(edge.node.edges, reverse=True)
+                case self.MOVEMENT:
+                    movement += [x.weight for x in node.edges]
 
-                return sorted(node.edges, reverse=True)
+                case self.HANDSHAPE:
+                    handshapes += [x.weight for x in node.edges]
+
+        location_spread = np.std(location) * np.ptp(location)
+        movement_spread = np.std(movement) * np.ptp(movement)
+        handshapes_spread = np.std(handshapes) * np.ptp(handshapes)
+
+        print(location_spread)
+        print(movement_spread)
+        print(handshapes_spread)
+
+    def __eq__(self, other):
+        if Graph != type(other):
+            return False
+
+        if self.nodes != other.nodes:
+            return False
+
+        return True
 
     def __str__(self):
         return_string = ""
         for node in self.nodes:
-            return_string = return_string + node.__str__() + "\n"
+            return_string = return_string + str(node) + "\n"
 
         return return_string
 
@@ -56,14 +108,23 @@ class Node:
         self.edges.append(new_edge)
         return new_edge.node
 
-    def __eq__(self, node):
-        if type(node) != Node:
+    def __eq__(self, other):
+        if Node != type(other):
             return False
 
-        if self.id == node.id and self.type == node.type:
-            return True
+        if self.id != other.id:
+            return False
 
-        return False
+        if self.type != other.type:
+            return False
+
+        return True
+
+    def __lt__(self, other):
+        if Node != type(other):
+            return False
+
+        return self.type < other.type
 
     def __str__(self):
         return_string = f"Node Id:{self.id}, Type:{self.type}"
@@ -78,59 +139,35 @@ class Edge:
         self.node = node
         self.weight = weight
 
-    def __eq__(self, edge):
-        if type(edge) != Edge:
+    def __eq__(self, other):
+        if Edge != type(other):
             return False
 
-        if edge.node == self.node:
-            return True
+        # compare values of nodes instead of nodes self to avoid possible infinite recursion
+        if self.node.id != other.node.id:
+            return False
 
-        return False
+        if self.node.type != other.node.type:
+            return False
+
+        return True
+
+    def __lt__(self, other):
+        if Edge != type(other):
+            return False
+
+        return (self.node.type, self.weight) < (other.node.type, other.weight)
 
     def __str__(self):
         return f"Weight:{self.weight}, \
                To: id:{self.node.id} type:{self.node.type}"
 
-    def __lt__(self, other):
-        return (self.node.type, self.weight) < (other.node.type, other.weight)
 
 
 if __name__ == '__main__':
-    LOCATION = 1
-    MOVEMENT = 2
-    HANDSHAPE = 3
-
-    glosses = []
-
-    db_file = r"./Data/signbank.db"
-    conn = None
 
     graph = Graph()
+    graph.create_graph_from_file('../data_scripts/Data/sign_property_data.txt')
 
-    for gloss in glosses:
-        # location_node  = graph.add_node(Node(gloss[LOCATION], LOCATION))
-        # movement_node  = graph.add_node(Node(gloss[MOVEMENT], MOVEMENT))
-        handshape_node = graph.add_node(Node(gloss[HANDSHAPE], HANDSHAPE))
-
-        edge_weight = 1
-
-        movement_node = Node(gloss[MOVEMENT], MOVEMENT)
-        location_node = Node(gloss[LOCATION], LOCATION)
-
-        movement_node = handshape_node.add_edge(
-                Edge(movement_node, edge_weight))
-        location_node = handshape_node.add_edge(
-                Edge(location_node, edge_weight))
-
-        movement_node.add_edge(Edge(location_node, edge_weight))
-        location_node.add_edge(Edge(movement_node, edge_weight))
-
-    edges = graph.search(Node('6', 3), None)
-    # edges = graph.search(Node('48',3), None)
-    # edges = graph.search(Node('48',3), Node('89',2))
-    # edges = graph.search(Node('48',3), Node('3',1))
-    if edges is not None:
-        for edge in edges:
-            print(edge)
-    else:
-        print("No options available")
+    print(graph)
+    # graph.pick_best_set()
