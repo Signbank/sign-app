@@ -27,7 +27,7 @@ class Graph:
             loc_node = Node(location, self.LOCATION)
             mov_node = Node(movement, self.MOVEMENT)
             hand_node = Node(handshape, self.HANDSHAPE)
-            
+
             loc_node = self.add_node(loc_node)
             mov_node = self.add_node(mov_node)
             hand_node = self.add_node(hand_node)
@@ -65,13 +65,15 @@ class Graph:
         return new_node
 
     def pick_best_set(self):
-        location_spread = self.calculated_set_value(self.location_nodes) 
-        movement_spread = self.calculated_set_value(self.movement_nodes) 
-        handshapes_spread = self.calculated_set_value(self.handshape_nodes) 
+        location_spread = self.calculated_set_value(self.location_nodes)
+        movement_spread = self.calculated_set_value(self.movement_nodes)
+        handshapes_spread = self.calculated_set_value(self.handshape_nodes)
 
-        if location_spread < movement_spread and location_spread < handshapes_spread:
+        if location_spread < movement_spread and \
+                location_spread < handshapes_spread:
             return self.location_nodes
-        elif movement_spread < location_spread and movement_spread < handshapes_spread:
+        elif movement_spread < location_spread and \
+                movement_spread < handshapes_spread:
             return self.movement_nodes
 
         return self.handshape_nodes
@@ -79,10 +81,10 @@ class Graph:
     def pick_second_set(self, picked_node):
         set_of_weights = []
 
-        picked_node.edges.sort(reverse = True)
+        picked_node.edges.sort(reverse=True)
 
-        first_type = picked_node.edges[0].node.type 
-        second_type = picked_node.edges[-1].node.type 
+        first_type = picked_node.edges[0].node.type
+        second_type = picked_node.edges[-1].node.type
 
         current_type = first_type
 
@@ -97,13 +99,18 @@ class Graph:
 
         set_of_weights.append(temp_list)
 
-        first_set_spread = np.std(set_of_weights[0]) * np.ptp(set_of_weights[0])
-        second_set_spread = np.std(set_of_weights[1]) * np.ptp(set_of_weights[1])
+        first_set_spread = np.std(set_of_weights[0]) * \
+            np.ptp(set_of_weights[0])
+        second_set_spread = np.std(set_of_weights[1]) * \
+            np.ptp(set_of_weights[1])
 
         if first_set_spread < second_set_spread:
-            return [x.node for x in picked_node.edges if x.node.type == first_type] 
+            return [x.node for x in picked_node.edges
+                    if x.node.type == first_type]
 
-        return [x.node for x in picked_node.edges if x.node.type == second_type] 
+        return [x.node for x in picked_node.edges
+                if x.node.type == second_type]
+
     def pick_third_set(self, first_node, second_node):
         return [x.node for x in second_node.edges if x in first_node.edges]
 
@@ -196,7 +203,8 @@ class Edge:
         if Edge != type(other):
             return False
 
-        # compare values of nodes instead of nodes self to avoid possible infinite recursion
+        # compare values of nodes instead of
+        # nodes self to avoid possible infinite recursion
         if self.node.id != other.node.id:
             return False
 
