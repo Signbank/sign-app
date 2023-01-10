@@ -9,7 +9,6 @@ class Graph:
 
     def __init__(self):
 
-        self.nodes = []
         self.location_nodes = []
         self.movement_nodes = []
         self.handshape_nodes = []
@@ -42,54 +41,105 @@ class Graph:
             hand_node.add_edge(Edge(loc_node, weight))
             hand_node.add_edge(Edge(mov_node, weight))
 
-        self.nodes = sorted(self.nodes)
+        self.location_nodes.sort()
+        self.movement_nodes.sort()
+        self.handshape_nodes.sort()
 
     def add_node(self, new_node):
-        for node in self.nodes:
-            if node == new_node:
+        match new_node.type:
+            case self.LOCATION:
+                return self.add_to_list(new_node, self.location_nodes)
+            case self.MOVEMENT:
+                return self.add_to_list(new_node, self.movement_nodes)
+            case self.HANDSHAPE:
+                return self.add_to_list(new_node, self.handshape_nodes)
+
+        return new_node
+
+    def add_to_list(self, new_node, node_list):
+        for node in node_list:
+            if node.id == new_node.id:
                 return node
 
-        self.nodes.append(new_node)
+        node_list.append(new_node)
         return new_node
 
     def pick_best_set(self):
-        location = []
-        movement = []
-        handshapes = []
+        location_spread = self.calculated_set_value(self.location_nodes) 
+        movement_spread = self.calculated_set_value(self.movement_nodes) 
+        handshapes_spread = self.calculated_set_value(self.handshape_nodes) 
 
-        for node in self.nodes:
-            match node.type:
-                case self.LOCATION:
-                    location += [x.weight for x in node.edges]
+        if location_spread < movement_spread and location_spread < handshapes_spread:
+            return self.location_nodes
+        elif movement_spread < location_spread and movement_spread < handshapes_spread:
+            return self.movement_nodes
 
-                case self.MOVEMENT:
-                    movement += [x.weight for x in node.edges]
+        return self.handshape_nodes
 
-                case self.HANDSHAPE:
-                    handshapes += [x.weight for x in node.edges]
+    def pick_second_set(self, picked_node):
+        set_of_weights = []
 
-        location_spread = np.std(location) * np.ptp(location)
-        movement_spread = np.std(movement) * np.ptp(movement)
-        handshapes_spread = np.std(handshapes) * np.ptp(handshapes)
+        picked_node.edges.sort(reverse = True)
 
-        print(location_spread)
-        print(movement_spread)
-        print(handshapes_spread)
+        first_type = picked_node.edges[0].node.type 
+        second_type = picked_node.edges[-1].node.type 
+
+        current_type = first_type
+
+        temp_list = []
+        for edge in picked_node.edges:
+            if edge.node.type != current_type:
+                current_type = edge.node.type
+                set_of_weights.append(temp_list)
+                temp_list = []
+
+            temp_list.append(edge.weight)
+
+        set_of_weights.append(temp_list)
+
+        first_set_spread = np.std(set_of_weights[0]) * np.ptp(set_of_weights[0])
+        second_set_spread = np.std(set_of_weights[1]) * np.ptp(set_of_weights[1])
+
+        if first_set_spread < second_set_spread:
+            return [x.node for x in picked_node.edges if x.node.type == first_type] 
+
+        return [x.node for x in picked_node.edges if x.node.type == second_type] 
+    def pick_third_set(self, first_node, second_node):
+        return [x.node for x in second_node.edges if x in first_node.edges]
+
+    def calculated_set_value(self, node_list):
+        weight_list = []
+
+        for node in node_list:
+            weight_list += [x.weight for x in node.edges]
+
+        return np.std(weight_list) * np.ptp(weight_list)
 
     def __eq__(self, other):
         if Graph != type(other):
             return False
 
-        if self.nodes != other.nodes:
+        if self.location_nodes != other.location_nodes:
+            return False
+
+        if self.movement_nodes != other.movement_nodes:
+            return False
+
+        if self.handshape_nodes != other.handshape_nodes:
             return False
 
         return True
 
     def __str__(self):
         return_string = ""
-        for node in self.nodes:
+        for node in self.location_nodes:
             return_string = return_string + str(node) + "\n"
 
+        for node in self.movement_nodes:
+            return_string = return_string + str(node) + "\n"
+
+        for node in self.handshape_nodes:
+            return_string = return_string + str(node) + "\n"
         return return_string
 
 
@@ -116,6 +166,9 @@ class Node:
             return False
 
         if self.type != other.type:
+            return False
+
+        if self.edges != other.edges:
             return False
 
         return True
@@ -161,13 +214,3 @@ class Edge:
     def __str__(self):
         return f"Weight:{self.weight}, \
                To: id:{self.node.id} type:{self.node.type}"
-
-
-
-if __name__ == '__main__':
-
-    graph = Graph()
-    graph.create_graph_from_file('../data_scripts/Data/sign_property_data.txt')
-
-    print(graph)
-    # graph.pick_best_set()
