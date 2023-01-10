@@ -1,29 +1,28 @@
 name: Pylint
 
-on: [push]
-
-env:
-  DJANGO_SETTINGS_MODULE: signapp.settings
-  PYTHONPATH: /home/tcunnen/Documents/SignApp
+on:
+  push:
+    branches: [ "main","develop" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10"]
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pylint
-        pip install pylint-django
-    - name: Analysing the code with pylint
-      run: |
-        pylint --load-plugins=pylint_django signapp
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.10
+      - name: Run Python commands
+        run: |
+          pip install --upgrade pip
+          python -m venv env
+          source env/bin/activate
+          pip install -r django/requirements.txt
+          pip install pylint
+          pip install pylint-django
+      - name: Analysing the code with pylint
+        run: |
+          env/bin/pylint --load-plugin=pylint_django --ignore-patterns="wsgi|asgi|apps|\d{4}_initial|manage" --disable=E0401 django
