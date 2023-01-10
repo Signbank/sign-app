@@ -1,6 +1,7 @@
 import os
-from django.test import TestCase
 from dictionary.Graph import Graph, Node, Edge
+from django.test import TestCase
+
 
 class EdgeTestCase(TestCase):
     def setUp(self):
@@ -74,15 +75,15 @@ class NodeTestCase(TestCase):
 
     def test_node_not_equal_edges(self):
         actual = Node(1, 0)
-        actual.edges.append(Edge(Node(2,1), 1))
+        actual.edges.append(Edge(Node(2, 1), 1))
 
         self.expected.edges.append(Edge(Node(3, 1), 1))
 
-        self.assertNotEqual(self.expected, actual) 
+        self.assertNotEqual(self.expected, actual)
 
     def test_node_equal_edges(self):
         actual = Node(1, 0)
-        actual.edges.append(Edge(Node(2,1), 1))
+        actual.edges.append(Edge(Node(2, 1), 1))
 
         self.expected.edges.append(Edge(Node(2, 1), 1))
 
@@ -157,7 +158,6 @@ class GraphTestCase(TestCase):
         movement_8.add_edge(Edge(location_8, 1))
         movement_8.add_edge(Edge(handshape_15, 1))
 
-
         handshape_15.add_edge(Edge(location_3, 5))
         handshape_15.add_edge(Edge(movement_49, 5))
         handshape_15.add_edge(Edge(location_3, 4))
@@ -193,18 +193,18 @@ class GraphTestCase(TestCase):
         actual = Graph()
         actual.create_graph_from_file('test_graph.txt')
 
-        self.assertEqual(self.expected,actual)
+        self.assertEqual(self.expected, actual)
 
     def test_graph_add_node(self):
         graph = Graph()
-        actual = graph.add_node(Node(1,0))
-        expected = Node(1,0)
+        actual = graph.add_node(Node(1, 0))
+        expected = Node(1, 0)
 
         self.assertEqual(expected, actual)
         self.assertEqual(expected, graph.location_nodes[0])
 
-    def test_graph_pick_best_set(self):
-        actual = self.expected.pick_best_set()
+    def test_graph_pick_first_set(self):
+        actual = self.expected.pick_first_set()
         expected = self.expected.movement_nodes
 
         self.assertEqual(expected, actual)
@@ -226,9 +226,9 @@ class GraphTestCase(TestCase):
     def test_graph_pick_handshape_for_second_set(self):
         picked_node = self.expected.handshape_nodes[0]
         actual = self.expected.pick_second_set(picked_node)
-        expected = [self.expected.movement_nodes[0], 
-                self.expected.movement_nodes[1], 
-                self.expected.movement_nodes[4]]
+        expected = [self.expected.movement_nodes[0],
+                    self.expected.movement_nodes[1],
+                    self.expected.movement_nodes[4]]
 
         self.assertEqual(expected, actual)
 
@@ -241,7 +241,7 @@ class GraphTestCase(TestCase):
         self.assertEqual(expected, actual)
 
     def test_graph_calculated_set_value(self):
-        actual = self.expected.calculated_set_value(self.expected.handshape_nodes)
+        actual = self.expected.calculated_set_spread(self.expected.handshape_nodes)
         expected = 18.856180831641268
 
         self.assertEqual(expected, actual)
