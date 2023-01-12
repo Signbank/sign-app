@@ -67,7 +67,7 @@ class Graph:
         """
         Adds a new node to the correct list
         """
-        match new_node.type:
+        match new_node.group:
             case self.LOCATION:
                 return self.check_if_exists(new_node, self.location_nodes)
             case self.MOVEMENT:
@@ -85,7 +85,7 @@ class Graph:
         same node
         """
         for node in node_list:
-            if node.id == new_node.id:
+            if node.identifier == new_node.identifier:
                 return node
 
         node_list.append(new_node)
@@ -118,15 +118,15 @@ class Graph:
 
         picked_node.edges.sort(reverse=True)
 
-        first_type = picked_node.edges[0].node.type
-        second_type = picked_node.edges[-1].node.type
+        first_group = picked_node.edges[0].node.group
+        second_group = picked_node.edges[-1].node.group
 
-        current_type = first_type
+        current_group = first_group
 
         temp_list = []
         for edge in picked_node.edges:
-            if edge.node.type != current_type:
-                current_type = edge.node.type
+            if edge.node.group != current_group:
+                current_group = edge.node.group
                 set_of_weights.append(temp_list)
                 temp_list = []
 
@@ -141,10 +141,10 @@ class Graph:
 
         if first_set_spread < second_set_spread:
             return [x.node for x in picked_node.edges
-                    if x.node.type == first_type]
+                    if x.node.group == first_group]
 
         return [x.node for x in picked_node.edges
-                if x.node.type == second_type]
+                if x.node.group == second_group]
 
     def pick_third_set(self, first_node, second_node):
         """
@@ -201,9 +201,9 @@ class Node:
     sign as this propertie
     """
 
-    def __init__(self, id, type):
-        self.id = id
-        self.type = type
+    def __init__(self, identifier, group):
+        self.identifier = identifier
+        self.group = group
         self.edges = []
 
     def add_edge(self, new_edge):
@@ -224,10 +224,10 @@ class Node:
         if Node != type(other):
             return False
 
-        if self.id != other.id:
+        if self.identifier != other.identifier:
             return False
 
-        if self.type != other.type:
+        if self.group != other.group:
             return False
 
         if self.edges != other.edges:
@@ -239,10 +239,10 @@ class Node:
         if Node != type(other):
             return False
 
-        return self.type < other.type
+        return self.group < other.group
 
     def __str__(self):
-        return_string = f"Node Id:{self.id}, Type:{self.type}"
+        return_string = f"Node Id:{self.identifier}, group:{self.group}"
         for edge in self.edges:
             return_string += f"\n       Edge: {edge}"
 
@@ -251,8 +251,7 @@ class Node:
 
 class Edge:
     """
-    An edge represents the link between two properties that er used in
-    the same sign
+    An edge represents the link between two properties that er used in the same sign
     """
 
     def __init__(self, node, weight):
@@ -265,10 +264,10 @@ class Edge:
 
         # compare values of nodes instead of
         # nodes self to avoid possible infinite recursion
-        if self.node.id != other.node.id:
+        if self.node.identifier != other.node.identifier:
             return False
 
-        if self.node.type != other.node.type:
+        if self.node.group != other.node.group:
             return False
 
         return True
@@ -277,8 +276,8 @@ class Edge:
         if Edge != type(other):
             return False
 
-        return (self.node.type, self.weight) < (other.node.type, other.weight)
+        return (self.node.group, self.weight) < (other.node.group, other.weight)
 
     def __str__(self):
         return f"Weight:{self.weight}, \
-               To: id:{self.node.id} type:{self.node.type}"
+               To: id:{self.node.identifier} group:{self.node.group}"

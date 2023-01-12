@@ -10,8 +10,8 @@ class EdgeTestCase(TestCase):
         """Create a edge that all the test can use to compare"""
         self.expected = Edge(Node(1, 0), 1)
 
-    def test_edge_not_equal_type(self):
-        """Test if edge==other_type returns false, so only an edge can be compared to an edge"""
+    def test_edge_not_equal_group(self):
+        """Test if edge==other_group returns false, so only an edge can be compared to an edge"""
         actual = Node(1, 0)
         self.assertNotEqual(self.expected, actual)
 
@@ -20,8 +20,8 @@ class EdgeTestCase(TestCase):
         actual = Edge(Node(2, 0), 1)
         self.assertNotEqual(self.expected, actual)
 
-    def test_edge_not_equal_node_type(self):
-        """Test if comparing edges with a node that has another type returns false"""
+    def test_edge_not_equal_node_group(self):
+        """Test if comparing edges with a node that has another group returns false"""
         actual = Edge(Node(1, 1), 1)
         self.assertNotEqual(self.expected, actual)
 
@@ -30,15 +30,15 @@ class EdgeTestCase(TestCase):
         actual = Edge(Node(1, 0), 1)
         self.assertEqual(self.expected, actual)
 
-    def test_edge_less_then_other_type(self):
-        """Test if edge<other_type returns false"""
+    def test_edge_less_then_other_group(self):
+        """Test if edge<other_group returns false"""
         actual = Node(1, 0)
         self.assertNotEqual(self.expected, actual)
 
-    def test_edge_less_then_other_node_type(self):
+    def test_edge_less_then_other_node_group(self):
         """
-        Test if an edge is less than other edge with another node type
-        Edges are sorted by node type and edge weight
+        Test if an edge is less than other edge with another node group
+        Edges are sorted by node group and edge weight
         """
         actual = Edge(Node(1, 1), 1)
         self.assertLess(self.expected,  actual)
@@ -81,12 +81,12 @@ class NodeTestCase(TestCase):
         self.assertEqual(self.expected.edges[0].weight, actual.edges[0].weight)
 
     def test_node_equal_to_same_valued_node(self):
-        """Check if nodes with the same id and type are equal to each other"""
+        """Check if nodes with the same id and group are equal to each other"""
         actual = Node(1, 0)
         self.assertEqual(self.expected, actual)
 
-    def test_node_not_equal_type(self):
-        """Check if node with a different type are not equal to each other"""
+    def test_node_not_equal_group(self):
+        """Check if node with a different group are not equal to each other"""
         actual = Edge(1, 1)
         self.assertNotEqual(self.expected, actual)
 
@@ -126,13 +126,13 @@ class NodeTestCase(TestCase):
 
         self.assertNotEqual(self.expected, actual)
 
-    def test_node_less_then_other_type(self):
-        """Check if node<other_type is false"""
+    def test_node_less_then_other_group(self):
+        """Check if node<other_group is false"""
         actual = Edge(Node(1, 0), 1)
         self.assertNotEqual(self.expected, actual)
 
-    def test_node_less_then_other_node_type(self):
-        """Check if node is less then node with another type"""
+    def test_node_less_then_other_node_group(self):
+        """Check if node is less then node with another group"""
         actual = Node(1, 1)
         self.assertLess(self.expected,  actual)
 
@@ -218,8 +218,8 @@ class GraphTestCase(TestCase):
 
         self.assertEqual(expected, actual)
 
-    def test_graph_not_equal_to_other_type(self):
-        """Check if graph==other_type is false"""
+    def test_graph_not_equal_to_other_group(self):
+        """Check if graph==other_group is false"""
         actual = Node(1, 0)
 
         self.assertNotEqual(self.expected, actual)
