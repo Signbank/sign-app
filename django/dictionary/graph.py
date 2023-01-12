@@ -1,3 +1,4 @@
+"""Module for use of graph with different sign properties"""
 import json
 import numpy as np
 
@@ -10,8 +11,7 @@ class Graph:
     respecitve lists and can be managed by the
     different methodes in this class.
 
-    A propertie is a node of the graph and has at least
-    two outgoing edges.
+    A property is a node of the graph and has at least two outgoing edges.
     These edges are the properties that are al used in a sign.
     """
 
