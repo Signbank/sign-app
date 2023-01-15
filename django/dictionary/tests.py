@@ -1,6 +1,123 @@
 import os
-from dictionary.graph import Graph, Node, Edge
+from unittest.mock import patch
+from pathlib import Path
+from rest_framework.test import APIRequestFactory, APITestCase
+from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from django.test import TestCase
+from django.urls import reverse
+from django.conf import settings
+import dictionary.views as view
+from dictionary.serializers import NodeSerializer
+from dictionary.graph import Graph, Node, Edge
+
+
+class SignPropertiesTestCase(APITestCase):
+    """ Test case for the view search with sign properties"""
+
+    def setUp(self):
+        """ Set up for test
+        A list of node is created that the front end returns and a property set to mock the graph funciton
+        """
+        self.factory = APIRequestFactory()
+        self.node1 = Node('1', 1)
+        self.node2 = Node('2', 2)
+        self.node3 = Node('3', 3)
+        self.node_list = [self.node1, self.node2, self.node3]
+        self.property_set = [self.node1, self.node2]  # this is the mocked return value
+
+    @patch('dictionary.graph')
+    def test_search_with_sign_properties_succes(self, mock_graph):
+        """ Test succes scenarion of view search properties"""
+        # Create an instance of the class and set the return value of the method
+        graph_instance = mock_graph()
+        graph_instance.pick_property_set.return_value = self.property_set
+
+        # Replace the class with the mock object
+        view.graph = graph_instance
+
+        # Create a request and force it to be a POST request
+        request = self.factory.post(reverse('search properties'))
+        request.data = NodeSerializer(self.node_list, many=True).data
+
+        # Call the view function
+        response = view.search_with_sign_properties(request)
+
+        # Assert that the response has a status code of 200
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Assert that the returned data is the same as the expected property set
+        actual = response.data
+        expected = NodeSerializer(self.property_set, many=True).data
+
+        self.assertEqual(actual, expected)
+
+    def test_search_with_sign_properties_bad_request(self):
+        """ Test case that returns a bad request when the request is not a POST """
+
+        # Create a request and force it to be a GET request
+        request = self.factory.get(reverse('search properties'))
+
+        # Call the view function
+        response = view.search_with_sign_properties(request)
+
+        # Assert that the response has a status code of 405
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class NodeSerializerTestCase(TestCase):
+    """
+    Test case for the NodeSerializer class
+    """
+
+    def setUp(self):
+        """
+        Set up test data
+        Create a list of valid an invalid data to test
+        """
+        self.valid_data = [
+            {'identifier': 1, 'group': 1},
+            {'identifier': 2, 'group': 2},
+            {'identifier': 3, 'group': 3},
+        ]
+
+        self.invalid_data = [
+            {'identifier': 'not_an_int', 'group': 1},
+            {'group': 2},
+        ]
+
+        self.invalid_key = [
+            {'invalid_key': 1, 'group': 1},
+            {'identifier': 1, 'wrong_key': 2},
+        ]
+
+    def test_desirialize_list(self):
+        """
+        Test the desirialize_list method with valid data
+        """
+        serializer = NodeSerializer(data=self.valid_data)
+        actual = serializer.desirialize_list()
+
+        self.assertEqual(len(actual), len(self.valid_data))
+        for i, node in enumerate(actual):
+            self.assertEqual(node.identifier, self.valid_data[i]['identifier'])
+            self.assertEqual(node.group, self.valid_data[i]['group'])
+
+    def test_desirialize_list_with_invalid_data(self):
+        """
+        Test the desirialize_list method with invalid data
+        """
+        serializer = NodeSerializer(data=self.invalid_data)
+        with self.assertRaises(ValidationError):
+            serializer.desirialize_list()
+
+    def test_desirialize_list_with_invalid_keys(self):
+        """
+        Test the desirialize_list method with invalid keys
+        """
+        serializer = NodeSerializer(data=self.invalid_data)
+        with self.assertRaises(ValidationError):
+            serializer.desirialize_list()
 
 
 class EdgeTestCase(TestCase):
@@ -156,7 +273,8 @@ class GraphTestCase(TestCase):
     def test_graph_create_from_file(self):
         """Check if the graph created from a file is as expected"""
         actual = Graph()
-        actual.create_graph_from_file('test_graph.txt')
+        file_path = Path(settings.BASE_DIR) / 'test_graph.txt'
+        actual.create_graph_from_file(file_path)
 
         self.assertEqual(self.expected, actual)
 
