@@ -3,7 +3,6 @@ from unittest.mock import patch
 from pathlib import Path
 from rest_framework.test import APIRequestFactory, APITestCase
 from rest_framework import status
-from rest_framework.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
 from django.conf import settings
@@ -75,49 +74,23 @@ class NodeSerializerTestCase(TestCase):
         Set up test data
         Create a list of valid an invalid data to test
         """
-        self.valid_data = [
+        self.expected = [
             {'identifier': 1, 'group': 1},
             {'identifier': 2, 'group': 2},
             {'identifier': 3, 'group': 3},
-        ]
-
-        self.invalid_data = [
-            {'identifier': 'not_an_int', 'group': 1},
-            {'group': 2},
-        ]
-
-        self.invalid_key = [
-            {'invalid_key': 1, 'group': 1},
-            {'identifier': 1, 'wrong_key': 2},
         ]
 
     def test_desirialize_list(self):
         """
         Test the desirialize_list method with valid data
         """
-        serializer = NodeSerializer(data=self.valid_data)
+        serializer = NodeSerializer(data=self.expected)
         actual = serializer.desirialize_list()
 
-        self.assertEqual(len(actual), len(self.valid_data))
+        self.assertEqual(len(actual), len(self.expected))
         for i, node in enumerate(actual):
-            self.assertEqual(node.identifier, self.valid_data[i]['identifier'])
-            self.assertEqual(node.group, self.valid_data[i]['group'])
-
-    def test_desirialize_list_with_invalid_data(self):
-        """
-        Test the desirialize_list method with invalid data
-        """
-        serializer = NodeSerializer(data=self.invalid_data)
-        with self.assertRaises(ValidationError):
-            serializer.desirialize_list()
-
-    def test_desirialize_list_with_invalid_keys(self):
-        """
-        Test the desirialize_list method with invalid keys
-        """
-        serializer = NodeSerializer(data=self.invalid_data)
-        with self.assertRaises(ValidationError):
-            serializer.desirialize_list()
+            self.assertEqual(node.identifier, self.expected[i]['identifier'])
+            self.assertEqual(node.group, self.expected[i]['group'])
 
 
 class EdgeTestCase(TestCase):

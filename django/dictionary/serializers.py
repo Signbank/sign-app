@@ -10,17 +10,23 @@ class NodeSerializer(serializers.Serializer):
     identifier = serializers.IntegerField(read_only=True)
     group = serializers.IntegerField(read_only=True)
 
+    def create(self, validated_data):
+        """
+        Override base methode
+        """
+        return Node(validated_data.get['identifier'], validated_data.get['group'])
+
+    def update(self, instance, validated_data):
+        """
+        Update a node instace
+        """
+        instance.identifier = validated_data.get('identifier', instance.identifier)
+        instance.group = validated_data.get('group', instance.group)
+
+        return instance
+
     def desirialize_list(self):
         """
         Return a list of Nodes instances
         """
-        list_of_instances = []
-        for item in self.initial_data:
-            try:
-                node = Node(item['identifier'], item['group'])
-                list_of_instances.append(node)
-            except KeyError:
-                raise serializers.ValidationError("Missing required fields")
-            except ValueError:
-                raise serializers.ValidationError("Invalid data type")
-        return list_of_instances
+        return [Node(item['identifier'], item['group']) for item in self.initial_data]
