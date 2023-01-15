@@ -281,57 +281,58 @@ class GraphTestCase(TestCase):
     def test_graph_add_node(self):
         """Test add node methode, it checks if the node already exists in and adds it to the correct list"""
         graph = Graph()
+        graph.nodes = [[], [], []]
         actual = graph.add_node(Node(1, 0))
         expected = Node(1, 0)
 
         self.assertEqual(expected, actual)
-        self.assertEqual(expected, graph.location_nodes[0])
+        self.assertEqual(expected, graph.nodes[0][0])
 
     def test_graph_pick_first_set(self):
         """Test if the node set picked by the methode is equal to the movement nodes"""
         actual = self.expected.pick_first_set()
-        expected = self.expected.movement_nodes
+        expected = self.expected.nodes[1]
 
         self.assertEqual(expected, actual)
 
     def test_graph_pick_location_for_second_set(self):
         """Check if all the nodes that are from the best set of edges of the first location node are returned"""
-        picked_node = self.expected.location_nodes[0]
+        picked_node = self.expected.nodes[0][0]
         actual = self.expected.pick_second_set(picked_node)
-        expected = sorted(self.expected.movement_nodes[0:-1])
+        expected = sorted(self.expected.nodes[1][0:-1])
 
         self.assertEqual(expected, actual)
 
     def test_graph_pick_movement_for_second_set(self):
         """Same test as before but with another chosen node"""
-        picked_node = self.expected.movement_nodes[0]
+        picked_node = self.expected.nodes[1][0]
         actual = self.expected.pick_second_set(picked_node)
-        expected = [self.expected.location_nodes[0]]
+        expected = [self.expected.nodes[0][0]]
 
         self.assertEqual(expected, actual)
 
     def test_graph_pick_handshape_for_second_set(self):
         """Same test as before but with another chosen node"""
-        picked_node = self.expected.handshape_nodes[0]
+        picked_node = self.expected.nodes[2][0]
         actual = self.expected.pick_second_set(picked_node)
-        expected = [self.expected.movement_nodes[0],
-                    self.expected.movement_nodes[1],
-                    self.expected.movement_nodes[4]]
+        expected = [self.expected.nodes[1][0],
+                    self.expected.nodes[1][1],
+                    self.expected.nodes[1][4]]
 
         self.assertEqual(expected, actual)
 
     def test_graph_pick_third_set(self):
         """Check the best when two node are chosen"""
-        first = self.expected.handshape_nodes[0]
-        second = self.expected.location_nodes[0]
+        first = self.expected.nodes[2][0]
+        second = self.expected.nodes[0][0]
         actual = self.expected.pick_third_set(first, second)
-        expected = self.expected.movement_nodes[0:2]
+        expected = self.expected.nodes[1][0:2]
 
         self.assertEqual(expected, actual)
 
     def test_graph_calculated_set_value(self):
         """Check if the set value is the same as expected"""
-        actual = self.expected.calculated_set_spread(self.expected.handshape_nodes)
+        actual = self.expected.calculated_set_spread(self.expected.nodes[2])
         expected = 18.856180831641268
 
         self.assertEqual(expected, actual)
@@ -345,6 +346,7 @@ class GraphTestCase(TestCase):
     def test_graph_not_equal_other_location_nodes(self):
         """Check if comparing two graphs is false when the locaiton nodes are not the same"""
         actual = Graph()
+        actual.nodes = [[], [], []]
         actual.add_node(Node(1, 0))
 
         self.assertNotEqual(self.expected, actual)
@@ -352,6 +354,7 @@ class GraphTestCase(TestCase):
     def test_graph_not_equal_other_movement_nodes(self):
         """Same as previous test but with movement node"""
         actual = Graph()
+        actual.nodes = [[], [], []]
         actual.add_node(Node(1, 1))
 
         self.assertNotEqual(self.expected, actual)
@@ -359,6 +362,7 @@ class GraphTestCase(TestCase):
     def test_graph_not_equal_other_handshape_nodes(self):
         """Same as previous test but with handshape node"""
         actual = Graph()
+        actual.nodes = [[], [], []]
         actual.add_node(Node(1, 2))
 
         self.assertNotEqual(self.expected, actual)
@@ -367,10 +371,7 @@ class GraphTestCase(TestCase):
         """Create a graph that can be compared to generated graphs"""
         graph = Graph()
 
-        nodes = self.set_up_test_nodes()
-
-        for node in nodes:
-            graph.add_node(node)
+        graph.nodes = self.set_up_test_nodes()
 
         return graph
 
@@ -430,6 +431,6 @@ class GraphTestCase(TestCase):
         handshape_6.add_edge(Edge(location_3, 2))
         handshape_6.add_edge(Edge(movement_16, 2))
 
-        return [location_3, location_8,
-                movement_49, movement_55, movement_51, movement_16, movement_8,
-                handshape_15, handshape_5, handshape_6]
+        return [[location_3, location_8],
+                [movement_49, movement_55, movement_51, movement_16, movement_8],
+                [handshape_15, handshape_5, handshape_6]]
