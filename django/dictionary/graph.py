@@ -29,21 +29,28 @@ class Graph:
             return
 
         with open(file_path, 'r', encoding='utf-8') as file:
-            dic_of_properties = json.load(file)
+            list_of_signs = json.load(file)
+
+        # Number of items that are not the properties
+        # This has to be subtracted to the index
+        n_p = 2
 
         # Add a list for every different property
-        list_data = list(dic_of_properties.values())
-        for i in range(len(list_data[0])-1):
+        for i in range(len(list_of_signs[0])-n_p):
             self.nodes.append([])
 
-        for item in list_data:
+        for item in list_of_signs:
             current_item_nodes = []
             for i, value in enumerate(item):
                 if i == 0:
+                    sign_id = value
+                    continue
+                if i == 1:
                     weight = value
                     continue
 
-                node = Node(value, i-1, nr_of_sets=len(self.nodes))
+                node = Node(value, i-n_p, nr_of_sets=len(self.nodes))
+                node.sign_ids.append(sign_id)
                 node = self.add_node(node)
                 current_item_nodes.append(node)
 
@@ -61,6 +68,7 @@ class Graph:
         node = self.get_node_from_list(new_node, node_list)
 
         if node is not None:
+            node.add_sign_id(new_node.sign_ids[0])
             return node
 
         node_list.append(new_node)
@@ -82,17 +90,17 @@ class Graph:
         The function receives a list of tuples containing the group and index of the node
         """
 
-        node_list = []
+        picked_nodes = []
         for node_tuple in list_of_node_index:
-            node_list.append(self.nodes[node_tuple[0]][node_tuple[1]])
+            picked_nodes.append(self.nodes[node_tuple[0]][node_tuple[1]])
 
-        match len(node_list):
+        match len(picked_nodes):
             case 0:
                 return self.pick_first_set()
             case 1:
-                return self.pick_second_set(node_list[0])
+                return self.pick_second_set(picked_nodes[0])
             case 2:
-                return self.pick_third_set(node_list[0], node_list[1])
+                return self.pick_third_set(picked_nodes[0], picked_nodes[1])
 
     def pick_first_set(self):
         """
@@ -144,6 +152,7 @@ class Graph:
         for i in range(len(second_node.edges)):
             if i in (first_node.group, second_node.group):
                 continue
+            print('return set')
             return [edge.node for edge in second_node.edges[i] if edge in first_node.edges[i]]
 
     def calculated_set_spread(self, node_list):
@@ -159,6 +168,24 @@ class Graph:
             weight_list += [edge.weight for edge in edge_list]
 
         return np.std(weight_list) * np.ptp(weight_list)
+
+    def get_sign_ids(self, node_index_tuple_list):
+        """ This function looks at all the sign id's that the chosen nodes have in common and returns a list with those id's"""
+
+        picked_nodes = []
+        for node_tuple in node_index_tuple_list:
+            picked_nodes.append(self.nodes[node_tuple[0]][node_tuple[1]])
+
+        # Get the last set as base list
+        signs = picked_nodes[-1].sign_ids
+
+        # Compare all list with sign id's except the last one because it was the Base
+        # Sets the list to all the signs the current signs list and that of the next node have in common
+        # A downside to this aproach is that we lose the ordering of the signs that was base on the frequency
+        for i in range(len(picked_nodes)-1):
+            signs = np.intersect1d(signs, picked_nodes[i].sign_ids)
+
+        return signs
 
     def __eq__(self, other):
         if Graph != type(other):
@@ -195,6 +222,7 @@ class Node:
         self.identifier = identifier
         self.group = group
         self.edges = [[] for i in range(nr_of_sets)]
+        self.sign_ids = []
 
     def add_edge(self, new_edge):
         """
@@ -209,6 +237,14 @@ class Node:
 
         self.edges[group].append(new_edge)
         return new_edge
+
+    def add_sign_id(self, sign_id):
+        """
+        Checks if a sign id is already pressent before adding it.
+        This way there are no duplicate id's
+        """
+        if sign_id not in self.sign_ids:
+            self.sign_ids.append(sign_id)
 
     def __eq__(self, other):
         if Node != type(other):
@@ -232,7 +268,7 @@ class Node:
         return self.group < other.group
 
     def __str__(self):
-        return_string = f"Node Id:{self.identifier}, group:{self.group}"
+        return_string = f"Node Id:{self.identifier}, group:{self.group}, sign id's: {self.sign_ids}"
         for edge_list in self.edges:
             for edge in edge_list:
                 return_string += f"\n       Edge: {edge}"

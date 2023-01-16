@@ -8,6 +8,7 @@ class NodeSerializer(serializers.Serializer):
     """
 
     identifier = serializers.IntegerField(read_only=True)
+    identifier = serializers.CharField()
     group = serializers.IntegerField(read_only=True)
 
     def create(self, validated_data):

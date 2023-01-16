@@ -15,15 +15,17 @@ class SignPropertiesTestCase(APITestCase):
     """ Test case for the view search with sign properties"""
 
     def setUp(self):
-        """ Set up for test
+        """
+        Set up for test
         A list of node is created that the front end returns and a property set to mock the graph funciton
         """
         self.factory = APIRequestFactory()
-        self.node1 = Node('1', 1)
-        self.node2 = Node('2', 2)
-        self.node3 = Node('3', 3)
-        self.node_list = [self.node1, self.node2, self.node3]
-        self.property_set = [self.node1, self.node2]  # this is the mocked return value
+        self.node_list = [Node('1', 1), Node('2', 2), Node('3', 3), Node('4', 4), Node('5', 5), Node('6', 6), Node('7', 7), Node('8', 8)]
+
+        # this is the mocked return value
+        self.property_set = self.node_list
+        self.property_set_few_items = self.node_list[0:2]
+        self.sign_id_list = [1, 2, 3]
 
     @patch('dictionary.graph')
     def test_search_with_sign_properties_succes(self, mock_graph):
@@ -31,12 +33,13 @@ class SignPropertiesTestCase(APITestCase):
         # Create an instance of the class and set the return value of the method
         graph_instance = mock_graph()
         graph_instance.pick_property_set.return_value = self.property_set
+        graph_instance.get_sign_ids.return_value = self.sign_id_list
 
         # Replace the class with the mock object
         view.graph = graph_instance
 
-        # Create a request and force it to be a POST request
-        request = self.factory.post(reverse('search properties'))
+        # Create a request and force it to be a GET request
+        request = self.factory.get(reverse('search properties'))
         request.data = NodeSerializer(self.node_list, many=True).data
 
         # Call the view function
@@ -51,17 +54,32 @@ class SignPropertiesTestCase(APITestCase):
 
         self.assertEqual(actual, expected)
 
-    def test_search_with_sign_properties_bad_request(self):
-        """ Test case that returns a bad request when the request is not a POST """
+    @patch('dictionary.graph')
+    def test_search_with_sign_properties_return_sign_ids(self, mock_graph):
+        """ Test if the signs are returned when there are few properties left"""
+        # Create an instance of the class and set the return value of the method
+        graph_instance = mock_graph()
+        graph_instance.pick_property_set.return_value = self.property_set_few_items
+        graph_instance.get_sign_ids.return_value = self.sign_id_list
+
+        # Replace the class with the mock object
+        view.graph = graph_instance
 
         # Create a request and force it to be a GET request
         request = self.factory.get(reverse('search properties'))
+        request.data = NodeSerializer(self.node_list, many=True).data
 
         # Call the view function
         response = view.search_with_sign_properties(request)
 
-        # Assert that the response has a status code of 405
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        # Assert that the response has a status code of 200
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Assert that the returned data is the same as the expected sign id list
+        actual = response.data
+        expected = self.sign_id_list
+
+        self.assertEqual(actual, expected)
 
 
 class NodeSerializerTestCase(TestCase):
@@ -235,7 +253,7 @@ class GraphTestCase(TestCase):
         """Create a file and a graph that can be used to compare graphs"""
 
         with open('test_graph.txt', 'w', encoding='utf-8') as file:
-            file.write('{"1":[5, 3, 49, 15], "2":[4, 3, 55, 15], "3":[3, 3, 51, 5], "4":[2, 3, 16, 6], "5":[1, 8, 8, 15]}')
+            file.write('[[1, 5, 3, 49, 15], [2, 4, 3, 55, 15], [3, 3, 3, 51, 5], [4, 2, 3, 16, 6], [5, 1, 8, 8, 15]]')
             file.close()
 
         self.expected = self.set_up_test_graph()
