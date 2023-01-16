@@ -3,11 +3,11 @@ from unittest.mock import patch
 from pathlib import Path
 from rest_framework.test import APIRequestFactory, APITestCase
 from rest_framework import status
+from dictionary.serializers import NodeSerializer
 from django.test import TestCase
 from django.urls import reverse
 from django.conf import settings
 import dictionary.views as view
-from dictionary.serializers import NodeIndexSerializer
 from dictionary.graph import Graph, Node, Edge
 
 
@@ -37,7 +37,7 @@ class SignPropertiesTestCase(APITestCase):
 
         # Create a request and force it to be a POST request
         request = self.factory.post(reverse('search properties'))
-        request.data = NodeIndexSerializer(self.node_list, many=True).data
+        request.data = NodeSerializer(self.node_list, many=True).data
 
         # Call the view function
         response = view.search_with_sign_properties(request)
@@ -47,7 +47,7 @@ class SignPropertiesTestCase(APITestCase):
 
         # Assert that the returned data is the same as the expected property set
         actual = response.data
-        expected = NodeIndexSerializer(self.property_set, many=True).data
+        expected = NodeSerializer(self.property_set, many=True).data
 
         self.assertEqual(actual, expected)
 
@@ -64,14 +64,15 @@ class SignPropertiesTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-class NodeIndexSerializerTestCase(TestCase):
+class NodeSerializerTestCase(TestCase):
     """
     Test case for the NodeSerializer class
     """
 
     def setUp(self):
         """
-        Create a list of valid data
+        Set up test data
+        Create a list of valid an invalid data to test
         """
         self.expected = [
             {'index': 1, 'group': 1},
@@ -83,13 +84,13 @@ class NodeIndexSerializerTestCase(TestCase):
         """
         Test the desirialize_list method with valid data
         """
-        serializer = NodeIndexSerializer(data=self.expected)
-        actual = serializer.desirialize_list()
+        serializer = NodeSerializer(data=self.expected)
+        actual = serializer.initial_data
 
         self.assertEqual(len(actual), len(self.expected))
-        for i, node_index_tuple in enumerate(actual):
-            self.assertEqual(node_index_tuple[0], self.expected[i]['group'])
-            self.assertEqual(node_index_tuple[1], self.expected[i]['index'])
+        for i, node in enumerate(actual):
+            self.assertEqual(node['index'], self.expected[i]['index'])
+            self.assertEqual(node['group'], self.expected[i]['group'])
 
 
 class EdgeTestCase(TestCase):
