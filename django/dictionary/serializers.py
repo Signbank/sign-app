@@ -1,32 +1,31 @@
 from rest_framework import serializers
-from dictionary.graph import Node
 
 
-class NodeSerializer(serializers.Serializer):
+class NodeIndexSerializer(serializers.Serializer):
     """
     A class that allows the Node class to be serialized and send in json format
     """
 
-    identifier = serializers.IntegerField(read_only=True)
     group = serializers.IntegerField(read_only=True)
+    index = serializers.IntegerField(read_only=True)
 
     def create(self, validated_data):
         """
         Override base methode
         """
-        return Node(validated_data.get['identifier'], validated_data.get['group'])
+        return (validated_data.get['group'], validated_data.get['index'])
 
     def update(self, instance, validated_data):
         """
-        Update a node instace
+        Update a tuple instace
         """
-        instance.identifier = validated_data.get('identifier', instance.identifier)
         instance.group = validated_data.get('group', instance.group)
+        instance.index = validated_data.get('index', instance.index)
 
         return instance
 
     def desirialize_list(self):
         """
-        Return a list of Nodes instances
+        Return a list of tuples that contain the group and index of the nodes
         """
-        return [Node(item['identifier'], item['group']) for item in self.initial_data]
+        return [(item['group'], item['index']) for item in self.initial_data]

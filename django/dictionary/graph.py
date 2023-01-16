@@ -1,5 +1,7 @@
 """Module for use of graph with different sign properties"""
 import json
+from functools import reduce
+from operator import iconcat
 import numpy as np
 
 
@@ -41,7 +43,7 @@ class Graph:
                     weight = value
                     continue
 
-                node = Node(value, i-1)
+                node = Node(value, i-1, nr_of_sets=len(self.nodes))
                 node = self.add_node(node)
                 current_item_nodes.append(node)
 
@@ -74,21 +76,23 @@ class Graph:
 
         return None
 
-    def pick_property_set(self, list_of_chosen_nodes):
+    def pick_property_set(self, list_of_node_index):
         """
         Pick the best property based on already chosen nodes
+        The function receives a list of tuples containing the group and index of the node
         """
 
-        for node in list_of_chosen_nodes:
-            node = self.get_node_from_list(node, self.nodes[node.group])
+        node_list = []
+        for node_tuple in list_of_node_index:
+            node_list.append(self.nodes[node_tuple[0]][node_tuple[1]])
 
-        match len(list_of_chosen_nodes):
+        match len(node_list):
             case 0:
                 return self.pick_first_set()
             case 1:
-                return self.pick_second_set(list_of_chosen_nodes[0])
+                return self.pick_second_set(node_list[0])
             case 2:
-                return self.pick_third_set(list_of_chosen_nodes[0], list_of_chosen_nodes[1])
+                return self.pick_third_set(node_list[0], node_list[1])
 
     def pick_first_set(self):
         """
@@ -109,47 +113,38 @@ class Graph:
 
     def pick_second_set(self, picked_node):
         """
-        Pick the best spread properties from all the outgoing edges
-        from the chosen node
+        Pick the best spread properties from all the outgoing edges from the chosen node
         """
-        set_of_weights = []
-
         picked_node.edges.sort(reverse=True)
 
-        first_group = picked_node.edges[0].node.group
-        second_group = picked_node.edges[-1].node.group
+        spread_values = []
 
-        current_group = first_group
+        for edge_list in picked_node.edges:
+            # Skip the empty edge list
+            if edge_list == []:
+                continue
 
-        temp_list = []
-        for edge in picked_node.edges:
-            if edge.node.group != current_group:
-                current_group = edge.node.group
-                set_of_weights.append(temp_list)
-                temp_list = []
+            weight_list = [edge.weight for edge in edge_list]
+            spread = np.std(weight_list) * np.ptp(weight_list)
+            spread_values.append(spread)
 
-            temp_list.append(edge.weight)
+        index_best_set = 0
 
-        set_of_weights.append(temp_list)
+        for i, spread in enumerate(spread_values):
+            if spread < spread_values[index_best_set]:
+                index_best_set = i
 
-        first_set_spread = np.std(set_of_weights[0]) * \
-            np.ptp(set_of_weights[0])
-        second_set_spread = np.std(set_of_weights[1]) * \
-            np.ptp(set_of_weights[1])
-
-        if first_set_spread < second_set_spread:
-            return [x.node for x in picked_node.edges
-                    if x.node.group == first_group]
-
-        return [x.node for x in picked_node.edges
-                if x.node.group == second_group]
+        return [edge.node for edge in picked_node.edges[index_best_set]]
 
     def pick_third_set(self, first_node, second_node):
         """
         This function returns all the nodes
         that are in the first and second node
         """
-        return [x.node for x in second_node.edges if x in first_node.edges]
+        for i in range(len(second_node.edges)):
+            if i in (first_node.group, second_node.group):
+                continue
+            return [edge.node for edge in second_node.edges[i] if edge in first_node.edges[i]]
 
     def calculated_set_spread(self, node_list):
         """
@@ -159,7 +154,9 @@ class Graph:
         weight_list = []
 
         for node in node_list:
-            weight_list += [x.weight for x in node.edges]
+            edge_list = []
+            reduce(iconcat, node.edges, edge_list)
+            weight_list += [edge.weight for edge in edge_list]
 
         return np.std(weight_list) * np.ptp(weight_list)
 
@@ -186,28 +183,32 @@ class Node:
     """
     This class represents a property in the graph
     It holds a list of edges that represent all
-    the other properties that are used in the same
-    sign as this property
+    the other properties that are used in the same sign as this property
     """
 
-    def __init__(self, identifier, group):
+    def __init__(self, identifier, group, nr_of_sets=1):
+        """
+        Set values of a node, the number of sets is should be the same as in the graph
+        This means that one list is empty because a node has no edges to the same group as itself
+        The reason behind this is that it is now still possible to use the same group index as for the graph
+        """
         self.identifier = identifier
         self.group = group
-        self.edges = []
+        self.edges = [[] for i in range(nr_of_sets)]
 
     def add_edge(self, new_edge):
         """
-        This method checks if this node already contains
-        the same edge.
+        This method checks if this node already contains the same edge.
         This make sure there are no duplicate edges
         """
-        for edge in self.edges:
+        group = new_edge.node.group
+        for edge in self.edges[group]:
             if edge == new_edge:
                 edge.weight += new_edge.weight
-                return edge.node
+                return edge
 
-        self.edges.append(new_edge)
-        return new_edge.node
+        self.edges[group].append(new_edge)
+        return new_edge
 
     def __eq__(self, other):
         if Node != type(other):
@@ -232,8 +233,9 @@ class Node:
 
     def __str__(self):
         return_string = f"Node Id:{self.identifier}, group:{self.group}"
-        for edge in self.edges:
-            return_string += f"\n       Edge: {edge}"
+        for edge_list in self.edges:
+            for edge in edge_list:
+                return_string += f"\n       Edge: {edge}"
 
         return return_string
 

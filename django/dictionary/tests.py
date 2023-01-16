@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.conf import settings
 import dictionary.views as view
-from dictionary.serializers import NodeSerializer
+from dictionary.serializers import NodeIndexSerializer
 from dictionary.graph import Graph, Node, Edge
 
 
@@ -37,7 +37,7 @@ class SignPropertiesTestCase(APITestCase):
 
         # Create a request and force it to be a POST request
         request = self.factory.post(reverse('search properties'))
-        request.data = NodeSerializer(self.node_list, many=True).data
+        request.data = NodeIndexSerializer(self.node_list, many=True).data
 
         # Call the view function
         response = view.search_with_sign_properties(request)
@@ -47,7 +47,7 @@ class SignPropertiesTestCase(APITestCase):
 
         # Assert that the returned data is the same as the expected property set
         actual = response.data
-        expected = NodeSerializer(self.property_set, many=True).data
+        expected = NodeIndexSerializer(self.property_set, many=True).data
 
         self.assertEqual(actual, expected)
 
@@ -64,33 +64,32 @@ class SignPropertiesTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-class NodeSerializerTestCase(TestCase):
+class NodeIndexSerializerTestCase(TestCase):
     """
     Test case for the NodeSerializer class
     """
 
     def setUp(self):
         """
-        Set up test data
-        Create a list of valid an invalid data to test
+        Create a list of valid data
         """
         self.expected = [
-            {'identifier': 1, 'group': 1},
-            {'identifier': 2, 'group': 2},
-            {'identifier': 3, 'group': 3},
+            {'index': 1, 'group': 1},
+            {'index': 2, 'group': 2},
+            {'index': 3, 'group': 3},
         ]
 
     def test_desirialize_list(self):
         """
         Test the desirialize_list method with valid data
         """
-        serializer = NodeSerializer(data=self.expected)
+        serializer = NodeIndexSerializer(data=self.expected)
         actual = serializer.desirialize_list()
 
         self.assertEqual(len(actual), len(self.expected))
-        for i, node in enumerate(actual):
-            self.assertEqual(node.identifier, self.expected[i]['identifier'])
-            self.assertEqual(node.group, self.expected[i]['group'])
+        for i, node_index_tuple in enumerate(actual):
+            self.assertEqual(node_index_tuple[0], self.expected[i]['group'])
+            self.assertEqual(node_index_tuple[1], self.expected[i]['index'])
 
 
 class EdgeTestCase(TestCase):
@@ -155,20 +154,20 @@ class NodeTestCase(TestCase):
         actual = Node(1, 0)
         actual.add_edge(Edge(Node(1, 0), 1))
 
-        self.expected.edges.append(Edge(Node(1, 0), 1))
+        self.expected.edges[0].append(Edge(Node(1, 0), 1))
 
         self.assertEqual(len(self.expected.edges), len(actual.edges))
 
     def test_node_add_exsisting_edge(self):
         """Test if add edge methode return a the node if it already exists"""
         actual = Node(1, 0)
-        actual.edges.append(Edge(Node(1, 0), 1))
+        actual.edges[0].append(Edge(Node(1, 0), 1))
         actual.add_edge(Edge(Node(1, 0), 2))
 
-        self.expected.edges.append(Edge(Node(1, 0), 3))
+        self.expected.edges[0].append(Edge(Node(1, 0), 3))
 
-        self.assertEqual(len(self.expected.edges), len(actual.edges))
-        self.assertEqual(self.expected.edges[0].weight, actual.edges[0].weight)
+        self.assertEqual(len(self.expected.edges[0]), len(actual.edges[0]))
+        self.assertEqual(self.expected.edges[0][0].weight, actual.edges[0][0].weight)
 
     def test_node_equal_to_same_valued_node(self):
         """Check if nodes with the same id and group are equal to each other"""
@@ -208,11 +207,12 @@ class NodeTestCase(TestCase):
         actual = Node(1, 0)
         actual_edge = Edge(actual, 1)
 
-        extra_edge = Edge(Node(2, 2), 1)
+        extra_edge = Edge(Node(2, 0), 1)
 
         actual.add_edge(actual_edge)
+        actual.add_edge(extra_edge)
+
         self.expected.add_edge(actual_edge)
-        self.expected.add_edge(extra_edge)
 
         self.assertNotEqual(self.expected, actual)
 
@@ -255,8 +255,8 @@ class GraphTestCase(TestCase):
         """Test add node methode, it checks if the node already exists in and adds it to the correct list"""
         graph = Graph()
         graph.nodes = [[], [], []]
-        actual = graph.add_node(Node(1, 0))
-        expected = Node(1, 0)
+        actual = graph.add_node(Node(1, 0, len(graph.nodes)))
+        expected = Node(1, 0, len(graph.nodes))
 
         self.assertEqual(expected, actual)
         self.assertEqual(expected, graph.nodes[0][0])
@@ -269,7 +269,10 @@ class GraphTestCase(TestCase):
         self.assertEqual(expected, actual)
 
     def test_graph_pick_location_for_second_set(self):
-        """Check if all the nodes that are from the best set of edges of the first location node are returned"""
+        """
+        Check if all the nodes that are from the best set of edges of the first location node are returned
+        Should return the first four movement nodes
+        """
         picked_node = self.expected.nodes[0][0]
         actual = self.expected.pick_second_set(picked_node)
         expected = sorted(self.expected.nodes[1][0:-1])
@@ -277,15 +280,21 @@ class GraphTestCase(TestCase):
         self.assertEqual(expected, actual)
 
     def test_graph_pick_movement_for_second_set(self):
-        """Same test as before but with another chosen node"""
+        """
+        Same test as before but picked a movement node
+        Should return the first handshape node
+        """
         picked_node = self.expected.nodes[1][0]
         actual = self.expected.pick_second_set(picked_node)
-        expected = [self.expected.nodes[0][0]]
+        expected = [self.expected.nodes[2][0]]
 
         self.assertEqual(expected, actual)
 
     def test_graph_pick_handshape_for_second_set(self):
-        """Same test as before but with another chosen node"""
+        """
+        Same test as before but picked a handshape node
+        Should return the three movement nodes
+        """
         picked_node = self.expected.nodes[2][0]
         actual = self.expected.pick_second_set(picked_node)
         expected = [self.expected.nodes[1][0],
@@ -295,7 +304,7 @@ class GraphTestCase(TestCase):
         self.assertEqual(expected, actual)
 
     def test_graph_pick_third_set(self):
-        """Check the best when two node are chosen"""
+        """Check the best set when two node are chosen"""
         first = self.expected.nodes[2][0]
         second = self.expected.nodes[0][0]
         actual = self.expected.pick_third_set(first, second)
@@ -305,8 +314,8 @@ class GraphTestCase(TestCase):
 
     def test_graph_calculated_set_value(self):
         """Check if the set value is the same as expected"""
-        actual = self.expected.calculated_set_spread(self.expected.nodes[2])
-        expected = 18.856180831641268
+        actual = round(self.expected.calculated_set_spread(self.expected.nodes[2]), 2)
+        expected = 18.86
 
         self.assertEqual(expected, actual)
 
@@ -350,19 +359,20 @@ class GraphTestCase(TestCase):
 
     def set_up_test_nodes(self):
         """Set up a list of nodes with coresponing edges for the test graph"""
+        nr_of_sets = 3
 
-        location_3 = Node(3, 0)
-        location_8 = Node(8, 0)
+        location_3 = Node(3, 0, nr_of_sets)
+        location_8 = Node(8, 0, nr_of_sets)
 
-        movement_49 = Node(49, 1)
-        movement_55 = Node(55, 1)
-        movement_51 = Node(51, 1)
-        movement_16 = Node(16, 1)
-        movement_8 = Node(8, 1)
+        movement_49 = Node(49, 1, nr_of_sets)
+        movement_55 = Node(55, 1, nr_of_sets)
+        movement_51 = Node(51, 1, nr_of_sets)
+        movement_16 = Node(16, 1, nr_of_sets)
+        movement_8 = Node(8, 1, nr_of_sets)
 
-        handshape_15 = Node(15, 2)
-        handshape_5 = Node(5, 2)
-        handshape_6 = Node(6, 2)
+        handshape_15 = Node(15, 2, nr_of_sets)
+        handshape_5 = Node(5, 2, nr_of_sets)
+        handshape_6 = Node(6, 2, nr_of_sets)
 
         location_3.add_edge(Edge(movement_49, 5))
         location_3.add_edge(Edge(handshape_15, 5))

@@ -1,7 +1,7 @@
 from pathlib import Path
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from dictionary.serializers import NodeSerializer
+from dictionary.serializers import NodeIndexSerializer
 from dictionary.graph import Graph
 from django.conf import settings
 
@@ -20,10 +20,10 @@ def search_with_sign_properties(request):
     """
 
     # Get data from request and put it in a list
-    serializer = NodeSerializer(data=request.data)
+    serializer = NodeIndexSerializer(data=request.data)
     node_list = serializer.desirialize_list()
 
     # Pick the best set to ask the user
     property_set = graph.pick_property_set(node_list)
-    serializer = NodeSerializer(property_set, many=True)
+    serializer = NodeIndexSerializer(property_set, many=True)
     return Response(serializer.data)
