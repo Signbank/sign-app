@@ -71,6 +71,7 @@ class Graph:
             node.add_sign_id(new_node.sign_ids[0])
             return node
 
+        new_node.index = len(node_list)
         node_list.append(new_node)
         return new_node
 
@@ -149,11 +150,17 @@ class Graph:
         This function returns all the nodes
         that are in the first and second node
         """
+
+        node_list = []
         for i in range(len(second_node.edges)):
             if i in (first_node.group, second_node.group):
                 continue
-            print('return set')
-            return [edge.node for edge in second_node.edges[i] if edge in first_node.edges[i]]
+
+            for edge in second_node.edges[i]:
+                if edge in first_node.edges[i]:
+                    node_list.append(edge.node)
+
+        return node_list
 
     def calculated_set_spread(self, node_list):
         """
@@ -223,6 +230,7 @@ class Node:
         self.group = group
         self.edges = [[] for i in range(nr_of_sets)]
         self.sign_ids = []
+        self.index = 0
 
     def add_edge(self, new_edge):
         """

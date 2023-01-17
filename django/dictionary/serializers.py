@@ -7,9 +7,9 @@ class NodeSerializer(serializers.Serializer):
     A class that allows the Node class to be serialized and send in json format
     """
 
-    identifier = serializers.IntegerField(read_only=True)
     identifier = serializers.CharField()
     group = serializers.IntegerField(read_only=True)
+    index = serializers.IntegerField(read_only=True)
 
     def create(self, validated_data):
         """
@@ -23,5 +23,6 @@ class NodeSerializer(serializers.Serializer):
         """
         instance.identifier = validated_data.get('identifier', instance.identifier)
         instance.group = validated_data.get('group', instance.group)
+        instance.index = validated_data.get('index', instance.index)
 
         return instance

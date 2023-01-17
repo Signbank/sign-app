@@ -38,8 +38,8 @@ class SignPropertiesTestCase(APITestCase):
         # Replace the class with the mock object
         view.graph = graph_instance
 
-        # Create a request and force it to be a GET request
-        request = self.factory.get(reverse('search properties'))
+        # Create a request and force it to be a post request
+        request = self.factory.post(reverse('search properties'))
         request.data = NodeSerializer(self.node_list, many=True).data
 
         # Call the view function
@@ -65,8 +65,8 @@ class SignPropertiesTestCase(APITestCase):
         # Replace the class with the mock object
         view.graph = graph_instance
 
-        # Create a request and force it to be a GET request
-        request = self.factory.get(reverse('search properties'))
+        # Create a request and force it to be a post request
+        request = self.factory.post(reverse('search properties'))
         request.data = NodeSerializer(self.node_list, many=True).data
 
         # Call the view function

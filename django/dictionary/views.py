@@ -11,7 +11,7 @@ file_path = Path(settings.BASE_DIR) / 'Data/sign_property_data.txt'
 graph.create_graph_from_file(file_path)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def search_with_sign_properties(request):
     """
     API endpoint that return sign properties with which the user can search for a sign.
@@ -23,7 +23,7 @@ def search_with_sign_properties(request):
     # Pick the best set to ask the user
     property_set = graph.pick_property_set(node_list)
 
-    if len(property_set) <= 5:
+    if len(node_list) >= 3:
         signs = graph.get_sign_ids(node_list)
         return Response(signs)
 
