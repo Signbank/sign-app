@@ -2,14 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:sign_app/video_page.dart';
+import 'package:sign_app/View/video_page.dart';
 
-import 'ObjectClass/sign.dart';
+import '../Models/sign.dart';
 
 class SearchSignList extends StatefulWidget {
-  const SearchSignList({super.key, required this.search});
+  const SearchSignList({super.key, required this.search, required this.signIds});
 
   final String search;
+  final List<int> signIds;
 
   @override
   State<SearchSignList> createState() => _SearchSignListState();
@@ -70,8 +71,18 @@ class _SearchSignListState extends State<SearchSignList> {
   }
 
   Future<List<Sign>> fetchSigns() async {
-    var url = 'http://10.0.2.2:8080/dictionary/gloss/api/?search=${widget.search}';
-    final response = await http.get(Uri.parse(url));
+    http.Response response;
+    if(widget.signIds.isNotEmpty){
+      var url = Uri.parse('http://10.0.2.2:8080/dictionary/gloss/api/?dataset=5&results=50');
+      var body = jsonEncode(widget.signIds);
+
+      response = await http.post(url,
+          headers: {"Content-Type": "application/json"}, body: body);
+    }else {
+      var url = 'http://10.0.2.2:8080/dictionary/gloss/api/?search=${widget
+          .search}&dataset=5&results=50';
+      response = await http.get(Uri.parse(url));
+    }
 
     if (response.statusCode == 200) {
       return json
