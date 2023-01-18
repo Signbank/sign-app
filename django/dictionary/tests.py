@@ -253,7 +253,7 @@ class GraphTestCase(TestCase):
         """Create a file and a graph that can be used to compare graphs"""
 
         with open('test_graph.txt', 'w', encoding='utf-8') as file:
-            file.write('[[1, 5, 3, 49, 15], [2, 4, 3, 55, 15], [3, 3, 3, 51, 5], [4, 2, 3, 16, 6], [5, 1, 8, 8, 15]]')
+            file.write('[[1, 1, "A", "Omlaag", "<2"], [2, 1, "A", "Naar voren", "T"], [3, 1, "P", "Omlaag", "T"], [4, 1, "P", "Omlaag", "<"]]')
             file.close()
 
         self.expected = self.set_up_test_graph()
@@ -268,6 +268,7 @@ class GraphTestCase(TestCase):
         file_path = Path(settings.BASE_DIR) / 'test_graph.txt'
         actual.create_graph_from_file(file_path)
 
+        actual.print_graph()
         self.assertEqual(self.expected, actual)
 
     def test_graph_add_node(self):

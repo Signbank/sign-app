@@ -31,33 +31,65 @@ class Graph:
         with open(file_path, 'r', encoding='utf-8') as file:
             list_of_signs = json.load(file)
 
-        # Number of items that are not the properties
-        # This has to be subtracted to the index
-        n_p = 2
+        self.number_of_properties = len(list_of_signs[1]) - 2
 
         # Add a list for every different property
-        for i in range(len(list_of_signs[0])-n_p):
+        for i in range(self.number_of_properties):
             self.nodes.append([])
 
-        for item in list_of_signs:
-            current_item_nodes = []
-            for i, value in enumerate(item):
-                if i == 0:
-                    sign_id = value
-                    continue
-                if i == 1:
-                    weight = value
-                    continue
+        for values in list_of_signs:
+            sign_id = values.pop(0)
+            weight = values.pop(0)
 
-                node = Node(value, i-n_p, nr_of_sets=len(self.nodes))
-                node.sign_ids.append(sign_id)
-                node = self.add_node(node)
-                current_item_nodes.append(node)
+            for i, property in enumerate(values):
+                # Copy property list so that we keep the original list
+                item = values.copy()
 
-            for node in current_item_nodes:
-                for other_node in current_item_nodes:
-                    if node != other_node:
-                        node.add_edge(Edge(other_node, weight))
+                # Get the value of the main/parent node
+                value = item.pop(i)
+
+                parent_node = self.add_node(Node(value, i, self.number_of_properties, [sign_id]))
+
+                # Create a methode that adds an edge per item in the item list
+                for x in item:
+                    self.add_edge_rec(sign_id, weight, values, parent_node, item.copy())
+
+                    # Remove the first item and add it to the end of the list
+                    # This way all the different items are added in every differnt order
+                    item.append(item.pop(0))
+
+    def print_graph(self):
+        print("--------------------------------------------------------------")
+        print()
+
+        for x in self.nodes:
+            for i in x:
+                print(i)
+                for j in i.edges:
+                    for k in j:
+                        print(f"    {k.node}")
+
+        print()
+        print("--------------------------------------------------------------")
+
+    def add_edge_rec(self, sign_id, weight, og, parent_node, value_list):
+        if value_list == []:
+            return
+
+        value = value_list.pop(0)
+
+        current_group = og.index(value)
+
+        node = Node(value, current_group, len(parent_node.edges), [sign_id])
+        edge = parent_node.add_edge(Edge(node, weight))
+
+        # If the edge already exists then add the current sign id to the list
+        # and use the existing node to add that have the same first edge
+        if edge is not None:
+            node = edge.node
+            node.sign_ids.append(sign_id)
+
+        self.add_edge_rec(sign_id, weight, og, node, value_list)
 
     def add_node(self, new_node):
         """
@@ -220,7 +252,7 @@ class Node:
     the other properties that are used in the same sign as this property
     """
 
-    def __init__(self, identifier, group, nr_of_sets=1):
+    def __init__(self, identifier, group, nr_of_sets=1, sign_ids=[], index=0):
         """
         Set values of a node, the number of sets is should be the same as in the graph
         This means that one list is empty because a node has no edges to the same group as itself
@@ -229,8 +261,8 @@ class Node:
         self.identifier = identifier
         self.group = group
         self.edges = [[] for i in range(nr_of_sets)]
-        self.sign_ids = []
-        self.index = 0
+        self.sign_ids = sign_ids
+        self.index = index
 
     def add_edge(self, new_edge):
         """
@@ -243,8 +275,9 @@ class Node:
                 edge.weight += new_edge.weight
                 return edge
 
+        new_edge.node.index = len(self.edges[group])
         self.edges[group].append(new_edge)
-        return new_edge
+        return None
 
     def add_sign_id(self, sign_id):
         """
