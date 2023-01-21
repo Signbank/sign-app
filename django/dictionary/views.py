@@ -23,9 +23,17 @@ def search_with_sign_properties(request):
     # Pick the best set to ask the user
     property_set = graph.pick_property_set(node_list)
 
-    if len(node_list) >= 3:
-        signs = graph.get_sign_ids(node_list)
-        return Response(signs)
+    list_of_sign_ids = []
+    for node in property_set:
+        for sign_id in node.sign_ids:
+            list_of_sign_ids.append(sign_id)
+
+    if len(list_of_sign_ids) <= 5:
+        return Response(list_of_sign_ids)
+
+    # When there is only one option return the list of signs because there is no choice
+    if len(property_set) == 1:
+        return Response(list_of_sign_ids)
 
     serializer = NodeSerializer(property_set, many=True)
     return Response(serializer.data)

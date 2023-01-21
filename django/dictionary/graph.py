@@ -31,54 +31,51 @@ class Graph:
         with open(file_path, 'r', encoding='utf-8') as file:
             list_of_signs = json.load(file)
 
-        self.number_of_properties = len(list_of_signs[1]) - 2
-
         # Add a list for every different property
-        for i in range(self.number_of_properties):
+        for i in range(len(list_of_signs[1]) - 2):
             self.nodes.append([])
 
         for values in list_of_signs:
             sign_id = values.pop(0)
             weight = values.pop(0)
 
-            for i, property in enumerate(values):
+            for i in range(len(values)):
                 # Copy property list so that we keep the original list
                 item = values.copy()
 
                 # Get the value of the main/parent node
                 value = item.pop(i)
 
-                parent_node = self.add_node(Node(value, i, self.number_of_properties, [sign_id]))
+                parent_node = self.add_node(Node(value, i, len(values), [sign_id]))
 
-                # Create a methode that adds an edge per item in the item list
-                for x in item:
-                    self.add_edge_rec(sign_id, weight, values, parent_node, item.copy())
+                # Go throug all the remaining items and create nodes and edges that are a part of the parent node
+                for j in range(len(item)):
+                    self.add_edge_rec(weight, values, parent_node, item.copy())
 
                     # Remove the first item and add it to the end of the list
                     # This way all the different items are added in every differnt order
                     item.append(item.pop(0))
 
-    def print_graph(self):
-        print("--------------------------------------------------------------")
-        print()
-
-        for x in self.nodes:
-            for i in x:
-                print(i)
-                for j in i.edges:
-                    for k in j:
-                        print(f"    {k.node}")
-
-        print()
-        print("--------------------------------------------------------------")
-
-    def add_edge_rec(self, sign_id, weight, og, parent_node, value_list):
+    def add_edge_rec(self, weight, original_list, parent_node, value_list):
+        """
+        Add an edge to every node with recursion
+        For every next value in the list a node is created and an edge added
+        to the previous node that points to the created node
+        """
         if value_list == []:
             return
 
         value = value_list.pop(0)
+        sign_id = parent_node.sign_ids[-1]
 
-        current_group = og.index(value)
+        # Get the correct group that the node belongs to
+        for i, original_value in enumerate(original_list):
+            if i == parent_node.group:
+                continue
+
+            if value == original_value:
+                current_group = i
+                break
 
         node = Node(value, current_group, len(parent_node.edges), [sign_id])
         edge = parent_node.add_edge(Edge(node, weight))
@@ -87,9 +84,9 @@ class Graph:
         # and use the existing node to add that have the same first edge
         if edge is not None:
             node = edge.node
-            node.sign_ids.append(sign_id)
+            node.add_sign_id(sign_id)
 
-        self.add_edge_rec(sign_id, weight, og, node, value_list)
+        self.add_edge_rec(weight, original_list, node, value_list)
 
     def add_node(self, new_node):
         """
@@ -123,17 +120,24 @@ class Graph:
         The function receives a list of tuples containing the group and index of the node
         """
 
-        picked_nodes = []
-        for node_tuple in list_of_node_index:
-            picked_nodes.append(self.nodes[node_tuple[0]][node_tuple[1]])
+        if list_of_node_index == []:
+            return self.pick_first_set()
 
-        match len(picked_nodes):
-            case 0:
-                return self.pick_first_set()
-            case 1:
-                return self.pick_second_set(picked_nodes[0])
-            case 2:
-                return self.pick_third_set(picked_nodes[0], picked_nodes[1])
+        node = self.get_sub_node_by_index_list(list_of_node_index)
+
+        return self.pick_best_set(node)
+
+    def get_sub_node_by_index_list(self, index_list):
+        """
+        Retrieves and return the node base on the list of indexes
+        """
+        first_index = index_list.pop(0)
+        node = self.nodes[first_index[0]][first_index[1]]
+
+        for index_tuple in index_list:
+            node = node.edges[index_tuple[0]][index_tuple[1]].node
+
+        return node
 
     def pick_first_set(self):
         """
@@ -152,17 +156,21 @@ class Graph:
 
         return self.nodes[index_best_set]
 
-    def pick_second_set(self, picked_node):
+    def pick_best_set(self, picked_node):
         """
         Pick the best spread properties from all the outgoing edges from the chosen node
         """
-        picked_node.edges.sort(reverse=True)
+
+        if picked_node.has_no_edges():
+            return [picked_node]
 
         spread_values = []
 
         for edge_list in picked_node.edges:
             # Skip the empty edge list
             if edge_list == []:
+                # Add an empty list so that the count stays the same as the property count
+                spread_values.append(-1)
                 continue
 
             weight_list = [edge.weight for edge in edge_list]
@@ -171,28 +179,23 @@ class Graph:
 
         index_best_set = 0
 
+        # If the picked node is of the first group then the first list is empty
+        if index_best_set == picked_node.group:
+            index_best_set = 1
+
         for i, spread in enumerate(spread_values):
+            # If the first set is zero increase the index by one two compare the other two values
+            # if i == 0 and spread == -1:
+            #     print(f"\n Increase index. i:{i}, spread:{spread}")
+            #     index_best_set += 1
+            #     continue
+            if spread == -1:
+                continue
+
             if spread < spread_values[index_best_set]:
                 index_best_set = i
 
         return [edge.node for edge in picked_node.edges[index_best_set]]
-
-    def pick_third_set(self, first_node, second_node):
-        """
-        This function returns all the nodes
-        that are in the first and second node
-        """
-
-        node_list = []
-        for i in range(len(second_node.edges)):
-            if i in (first_node.group, second_node.group):
-                continue
-
-            for edge in second_node.edges[i]:
-                if edge in first_node.edges[i]:
-                    node_list.append(edge.node)
-
-        return node_list
 
     def calculated_set_spread(self, node_list):
         """
@@ -207,24 +210,6 @@ class Graph:
             weight_list += [edge.weight for edge in edge_list]
 
         return np.std(weight_list) * np.ptp(weight_list)
-
-    def get_sign_ids(self, node_index_tuple_list):
-        """ This function looks at all the sign id's that the chosen nodes have in common and returns a list with those id's"""
-
-        picked_nodes = []
-        for node_tuple in node_index_tuple_list:
-            picked_nodes.append(self.nodes[node_tuple[0]][node_tuple[1]])
-
-        # Get the last set as base list
-        signs = picked_nodes[-1].sign_ids
-
-        # Compare all list with sign id's except the last one because it was the Base
-        # Sets the list to all the signs the current signs list and that of the next node have in common
-        # A downside to this aproach is that we lose the ordering of the signs that was base on the frequency
-        for i in range(len(picked_nodes)-1):
-            signs = np.intersect1d(signs, picked_nodes[i].sign_ids)
-
-        return signs
 
     def __eq__(self, other):
         if Graph != type(other):
@@ -252,7 +237,7 @@ class Node:
     the other properties that are used in the same sign as this property
     """
 
-    def __init__(self, identifier, group, nr_of_sets=1, sign_ids=[], index=0):
+    def __init__(self, identifier, group, nr_of_sets=1, sign_ids=None):
         """
         Set values of a node, the number of sets is should be the same as in the graph
         This means that one list is empty because a node has no edges to the same group as itself
@@ -261,8 +246,11 @@ class Node:
         self.identifier = identifier
         self.group = group
         self.edges = [[] for i in range(nr_of_sets)]
-        self.sign_ids = sign_ids
-        self.index = index
+        if sign_ids is None:
+            self.sign_ids = []
+        else:
+            self.sign_ids = sign_ids
+        self.index = 0
 
     def add_edge(self, new_edge):
         """
@@ -286,6 +274,16 @@ class Node:
         """
         if sign_id not in self.sign_ids:
             self.sign_ids.append(sign_id)
+
+    def has_no_edges(self):
+        """
+        If an node has no edges return True
+        """
+        for edge_list in self.edges:
+            if edge_list != []:
+                return False
+
+        return True
 
     def __eq__(self, other):
         if Node != type(other):

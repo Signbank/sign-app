@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.conf import settings
 import dictionary.views as view
 from dictionary.graph import Graph, Node, Edge
+from copy import deepcopy
 
 
 class SignPropertiesTestCase(APITestCase):
@@ -20,11 +21,19 @@ class SignPropertiesTestCase(APITestCase):
         A list of node is created that the front end returns and a property set to mock the graph funciton
         """
         self.factory = APIRequestFactory()
-        self.node_list = [Node('1', 1), Node('2', 2), Node('3', 3), Node('4', 4), Node('5', 5), Node('6', 6), Node('7', 7), Node('8', 8)]
+        self.node_list = [
+                Node('1', 1, 3, [1]),
+                Node('2', 2, 3, [2]),
+                Node('3', 3, 3, [3]),
+                Node('4', 4, 3, [4]),
+                Node('5', 5, 3, [5]),
+                Node('6', 6, 3, [6]),
+                Node('7', 7, 3, [7]),
+                Node('8', 8, 3, [8])]
 
         # this is the mocked return value
         self.property_set = self.node_list
-        self.property_set_few_items = self.node_list[0:2]
+        self.property_set_few_items = self.node_list[0:3]
         self.sign_id_list = [1, 2, 3]
 
     @patch('dictionary.graph')
@@ -253,7 +262,7 @@ class GraphTestCase(TestCase):
         """Create a file and a graph that can be used to compare graphs"""
 
         with open('test_graph.txt', 'w', encoding='utf-8') as file:
-            file.write('[[1, 1, "A", "Omlaag", "<2"], [2, 1, "A", "Naar voren", "T"], [3, 1, "P", "Omlaag", "T"], [4, 1, "P", "Omlaag", "<"]]')
+            file.write('[[1, 5, 3, 49, 15], [2, 4, 3, 55, 15], [3, 3, 3, 51, 5], [4, 2, 3, 16, 6], [5, 1, 8, 8, 15]]')
             file.close()
 
         self.expected = self.set_up_test_graph()
@@ -268,7 +277,6 @@ class GraphTestCase(TestCase):
         file_path = Path(settings.BASE_DIR) / 'test_graph.txt'
         actual.create_graph_from_file(file_path)
 
-        actual.print_graph()
         self.assertEqual(self.expected, actual)
 
     def test_graph_add_node(self):
@@ -288,54 +296,43 @@ class GraphTestCase(TestCase):
 
         self.assertEqual(expected, actual)
 
-    def test_graph_pick_location_for_second_set(self):
+    def test_graph_pick_location_as_first_property(self):
         """
         Check if all the nodes that are from the best set of edges of the first location node are returned
         Should return the first four movement nodes
         """
         picked_node = self.expected.nodes[0][0]
-        actual = self.expected.pick_second_set(picked_node)
-        expected = sorted(self.expected.nodes[1][0:-1])
+        actual = self.expected.pick_best_set(picked_node)
+        expected = [edge.node for edge in self.expected.nodes[0][0].edges[1]]
 
         self.assertEqual(expected, actual)
 
-    def test_graph_pick_movement_for_second_set(self):
+    def test_graph_pick_movement_as_second_property(self):
         """
         Same test as before but picked a movement node
-        Should return the first handshape node
+        Should return the first location node
         """
         picked_node = self.expected.nodes[1][0]
-        actual = self.expected.pick_second_set(picked_node)
-        expected = [self.expected.nodes[2][0]]
+        actual = self.expected.pick_best_set(picked_node)
+        expected = [edge.node for edge in self.expected.nodes[1][0].edges[0]]
 
         self.assertEqual(expected, actual)
 
     def test_graph_pick_handshape_for_second_set(self):
         """
         Same test as before but picked a handshape node
-        Should return the three movement nodes
+        Should return the movement nodes
         """
         picked_node = self.expected.nodes[2][0]
-        actual = self.expected.pick_second_set(picked_node)
-        expected = [self.expected.nodes[1][0],
-                    self.expected.nodes[1][1],
-                    self.expected.nodes[1][4]]
-
-        self.assertEqual(expected, actual)
-
-    def test_graph_pick_third_set(self):
-        """Check the best set when two node are chosen"""
-        first = self.expected.nodes[2][0]
-        second = self.expected.nodes[0][0]
-        actual = self.expected.pick_third_set(first, second)
-        expected = self.expected.nodes[1][0:2]
+        actual = self.expected.pick_best_set(picked_node)
+        expected = [edge.node for edge in self.expected.nodes[2][0].edges[1]]
 
         self.assertEqual(expected, actual)
 
     def test_graph_calculated_set_value(self):
         """Check if the set value is the same as expected"""
         actual = round(self.expected.calculated_set_spread(self.expected.nodes[2]), 2)
-        expected = 18.86
+        expected = 15.55
 
         self.assertEqual(expected, actual)
 
@@ -375,10 +372,14 @@ class GraphTestCase(TestCase):
 
         graph.nodes = self.set_up_test_nodes()
 
+        # file_path = Path(settings.BASE_DIR) / 'test_graph.txt'
+        # graph.create_graph_from_file(file_path)
+
         return graph
 
     def set_up_test_nodes(self):
         """Set up a list of nodes with coresponing edges for the test graph"""
+        self.set_up_location_nodes()
         nr_of_sets = 3
 
         location_3 = Node(3, 0, nr_of_sets)
@@ -394,46 +395,75 @@ class GraphTestCase(TestCase):
         handshape_5 = Node(5, 2, nr_of_sets)
         handshape_6 = Node(6, 2, nr_of_sets)
 
-        location_3.add_edge(Edge(movement_49, 5))
-        location_3.add_edge(Edge(handshape_15, 5))
-        location_3.add_edge(Edge(movement_55, 4))
-        location_3.add_edge(Edge(handshape_15, 4))
-        location_3.add_edge(Edge(movement_51, 3))
-        location_3.add_edge(Edge(handshape_5, 3))
-        location_3.add_edge(Edge(movement_16, 2))
-        location_3.add_edge(Edge(handshape_6, 2))
+        location_3.add_edge(Edge(movement_49, 1))
+        location_3.add_edge(Edge(handshape_15, 2))
+        location_3.add_edge(Edge(movement_55, 1))
+        location_3.add_edge(Edge(handshape_15, 1))
+        location_3.add_edge(Edge(movement_51, 1))
+        location_3.add_edge(Edge(handshape_5, 1))
+        location_3.add_edge(Edge(movement_16, 1))
+        location_3.add_edge(Edge(handshape_6, 1))
 
         location_8.add_edge(Edge(movement_8, 1))
         location_8.add_edge(Edge(handshape_15, 1))
 
-        movement_49.add_edge(Edge(location_3, 5))
-        movement_49.add_edge(Edge(handshape_15, 5))
+        movement_49.add_edge(Edge(location_3, 1))
+        movement_49.add_edge(Edge(handshape_15, 1))
 
-        movement_55.add_edge(Edge(location_3, 4))
-        movement_55.add_edge(Edge(handshape_15, 4))
+        movement_55.add_edge(Edge(location_3, 1))
+        movement_55.add_edge(Edge(handshape_15, 1))
 
-        movement_51.add_edge(Edge(location_3, 3))
-        movement_51.add_edge(Edge(handshape_5, 3))
+        movement_51.add_edge(Edge(location_3, 1))
+        movement_51.add_edge(Edge(handshape_5, 1))
 
-        movement_16.add_edge(Edge(location_3, 2))
-        movement_16.add_edge(Edge(handshape_6, 2))
+        movement_16.add_edge(Edge(location_3, 1))
+        movement_16.add_edge(Edge(handshape_6, 1))
 
         movement_8.add_edge(Edge(location_8, 1))
         movement_8.add_edge(Edge(handshape_15, 1))
 
-        handshape_15.add_edge(Edge(location_3, 5))
-        handshape_15.add_edge(Edge(movement_49, 5))
-        handshape_15.add_edge(Edge(location_3, 4))
-        handshape_15.add_edge(Edge(movement_55, 4))
+        handshape_15.add_edge(Edge(location_3, 2))
+        handshape_15.add_edge(Edge(movement_49, 1))
+        handshape_15.add_edge(Edge(location_3, 1))
+        handshape_15.add_edge(Edge(movement_55, 1))
         handshape_15.add_edge(Edge(location_8, 1))
         handshape_15.add_edge(Edge(movement_8, 1))
 
-        handshape_5.add_edge(Edge(location_3, 3))
-        handshape_5.add_edge(Edge(movement_51, 3))
+        handshape_5.add_edge(Edge(location_3, 1))
+        handshape_5.add_edge(Edge(movement_51, 1))
 
-        handshape_6.add_edge(Edge(location_3, 2))
-        handshape_6.add_edge(Edge(movement_16, 2))
+        handshape_6.add_edge(Edge(location_3, 1))
+        handshape_6.add_edge(Edge(movement_16, 1))
 
         return [[location_3, location_8],
                 [movement_49, movement_55, movement_51, movement_16, movement_8],
                 [handshape_15, handshape_5, handshape_6]]
+
+    def set_up_location_nodes(self, graph):
+        nr_of_sets = 3
+
+        location_3 = Node(3, 0, nr_of_sets, [1, 2, 3, 4])
+
+        movement_49 = Node(49, 1, nr_of_sets, [1])
+        movement_55 = Node(55, 1, nr_of_sets, [2])
+        movement_51 = Node(51, 1, nr_of_sets, [3])
+        movement_16 = Node(16, 1, nr_of_sets, [4])
+
+        handshape_15 = Node(15, 2, nr_of_sets, [5, 4])
+        cph15 = deepcopy(handshape_15)
+
+        movement_49.edges[2].append(Edge(cph15, 5))
+        movement_55.edges[2].append(Edge(cph15, 4))
+
+        handshape_15.edges[1].append(Edge(deepcopy(movement_49), 5))
+        handshape_15.edges[1].append(Edge(deepcopy(movement_55), 4))
+
+        handshape_5 = Node(5, 2, nr_of_sets)
+        handshape_6 = Node(6, 2, nr_of_sets)
+
+        location_3.edges[1].append(Edge()
+        location_3.edges[2].append(Edge(handshape_15, 9))
+
+        location_8 = Node(8, 0, nr_of_sets, [5])
+
+        movement_8 = Node(8, 1, nr_of_sets)
