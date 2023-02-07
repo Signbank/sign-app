@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sign_app/View/sign_list.dart';
-import 'package:sign_app/View/sign_property_list.dart';
-import 'package:sign_app/View/test_anim_list.dart';
+import 'package:sign_app/View/search_property_list.dart';
 
 Future<void> searchDialogBuilder(BuildContext context) {
   var search = '';
@@ -36,7 +35,7 @@ Future<void> searchDialogBuilder(BuildContext context) {
                     Navigator.of(context).pop();
                     Navigator.of(context).push(
                         MaterialPageRoute(
-                            builder: (context) => const TestAnimList()));
+                            builder: (context) => const SearchPropertyList()));
                   },
                   child: Text(AppLocalizations.of(context)!.searchByGesture)),
             )
@@ -54,7 +53,7 @@ Future<void> searchDialogBuilder(BuildContext context) {
               Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => SearchSignList(search: search, signIds: [],)),
+                    builder: (context) => SearchSignList(search: search, signIds: const [],)),
               );
             },
           ),

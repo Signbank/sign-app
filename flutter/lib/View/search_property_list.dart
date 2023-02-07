@@ -7,18 +7,19 @@ import 'package:sign_app/View/sign_list.dart';
 
 import '../Models/property.dart';
 
-class TestAnimList extends StatefulWidget {
-  const TestAnimList({super.key});
+class SearchPropertyList extends StatefulWidget {
+  const SearchPropertyList({super.key});
 
   @override
-  State<TestAnimList> createState() => _TestAnimListState();
+  State<SearchPropertyList> createState() => _SearchPropertyListState();
 }
 
-class _TestAnimListState extends State<TestAnimList>
+class _SearchPropertyListState extends State<SearchPropertyList>
     with TickerProviderStateMixin {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
   final List<Property> _propertyList = List.empty(growable: true);
   final List<PropertyIndex> _chosenProperties = List.empty(growable: true);
+  late String title;
 
   @override
   void initState() {
@@ -46,13 +47,10 @@ class _TestAnimListState extends State<TestAnimList>
     var url = Uri.parse('http://10.0.2.2:8000/search');
     var body = json.encode(_chosenProperties);
 
-    print("body: $body");
-
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: body);
 
     if (response.statusCode == 200) {
-      print(response.body);
       try {
         List<Property> data = json
             .decode(response.body)
@@ -63,13 +61,17 @@ class _TestAnimListState extends State<TestAnimList>
         _refreshData(data);
       } on TypeError {
 
-        List<int> list_of_sign_ids = jsonDecode(response.body).cast<int>();
+        List<int> listOfSignIds = jsonDecode(response.body).cast<int>();
 
-        Navigator.of(context).pop();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => SearchSignList(search: '', signIds: list_of_sign_ids,)),
-        );
+        // Check if the current widget is still on screen
+        if(mounted) {
+          Navigator.of(context).pop();
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) =>
+                    SearchSignList(search: '', signIds: listOfSignIds,)),
+          );
+        }
       }
     } else {
       throw Exception(
@@ -112,7 +114,6 @@ class _TestAnimListState extends State<TestAnimList>
       child: InkWell(
         onTap: () {
           _chosenProperties.add(PropertyIndex(group: item.group, index: item.index));
-          print(item.index);
           fetchProperties();
         },
         child: SizedBox(
