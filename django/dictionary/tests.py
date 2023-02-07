@@ -38,7 +38,7 @@ class SignPropertiesTestCase(APITestCase):
 
     @patch('dictionary.graph')
     def test_search_with_sign_properties_succes(self, mock_graph):
-        """ Test succes scenarion of view search properties"""
+        """ Test succes scenario of view search properties"""
         # Create an instance of the class and set the return value of the method
         graph_instance = mock_graph()
         graph_instance.pick_property_set.return_value = self.property_set
@@ -461,7 +461,7 @@ class GraphTestCase(TestCase):
         handshape_5 = Node(5, 2, nr_of_sets)
         handshape_6 = Node(6, 2, nr_of_sets)
 
-        location_3.edges[1].append(Edge()
+        location_3.edges[1].append(Edge())
         location_3.edges[2].append(Edge(handshape_15, 9))
 
         location_8 = Node(8, 0, nr_of_sets, [5])
