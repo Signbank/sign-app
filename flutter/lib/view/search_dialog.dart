@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:sign_app/View/sign_list.dart';
-import 'package:sign_app/View/sign_property_list.dart';
-import 'package:sign_app/View/test_anim_list.dart';
+import 'package:sign_app/view/search_property_list.dart';
+import 'package:sign_app/view/sign_list.dart';
 
 Future<void> searchDialogBuilder(BuildContext context) {
-  var search = '';
+  var searchInput = '';
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
@@ -16,17 +15,6 @@ Future<void> searchDialogBuilder(BuildContext context) {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              onChanged: (value) {
-                search = value;
-              },
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(32))),
-                hintText: AppLocalizations.of(context)!.searchByWord,
-              ),
-            ),
-            const Padding(padding: EdgeInsets.all(8)),
             SizedBox(
               height: 60,
               width: 400,
@@ -36,10 +24,21 @@ Future<void> searchDialogBuilder(BuildContext context) {
                     Navigator.of(context).pop();
                     Navigator.of(context).push(
                         MaterialPageRoute(
-                            builder: (context) => const TestAnimList()));
+                            builder: (context) => const SearchPropertyList()));
                   },
                   child: Text(AppLocalizations.of(context)!.searchByGesture)),
-            )
+            ),
+            const Padding(padding: EdgeInsets.all(8)),
+            TextField(
+              onChanged: (value) {
+                searchInput = value;
+              },
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(32))),
+                hintText: AppLocalizations.of(context)!.searchByWord,
+              ),
+            ),
           ],
         ),
         actions: <Widget>[
@@ -54,7 +53,7 @@ Future<void> searchDialogBuilder(BuildContext context) {
               Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => SearchSignList(search: search, signIds: [],)),
+                    builder: (context) => SearchSignList(search: searchInput, signIds: const [],)),
               );
             },
           ),
