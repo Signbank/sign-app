@@ -1,11 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:sign_app/Models/property_index.dart';
 import 'package:http/http.dart' as http;
-import 'package:sign_app/View/sign_list.dart';
-
-import '../Models/property.dart';
+import 'package:sign_app/models/property.dart';
+import 'package:sign_app/models/property_index.dart';
+import 'package:sign_app/view/sign_list.dart';
 
 class SearchPropertyList extends StatefulWidget {
   const SearchPropertyList({super.key});

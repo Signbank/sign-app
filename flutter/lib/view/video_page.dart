@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sign_app/View/video_player.dart';
-
-import '../Models/sign.dart';
+import 'package:sign_app/models/sign.dart';
+import 'package:sign_app/view/video_player.dart';
 
 class VideoPage extends StatefulWidget{
   const VideoPage({super.key, required this.sign});

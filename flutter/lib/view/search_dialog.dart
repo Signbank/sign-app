@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:sign_app/View/sign_list.dart';
-import 'package:sign_app/View/search_property_list.dart';
+import 'package:sign_app/view/search_property_list.dart';
+import 'package:sign_app/view/sign_list.dart';
 
 Future<void> searchDialogBuilder(BuildContext context) {
-  var search = '';
+  var searchInput = '';
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
@@ -17,7 +17,7 @@ Future<void> searchDialogBuilder(BuildContext context) {
           children: [
             TextField(
               onChanged: (value) {
-                search = value;
+                searchInput = value;
               },
               decoration: InputDecoration(
                 border: const OutlineInputBorder(
@@ -53,7 +53,7 @@ Future<void> searchDialogBuilder(BuildContext context) {
               Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => SearchSignList(search: search, signIds: const [],)),
+                    builder: (context) => SearchSignList(search: searchInput, signIds: const [],)),
               );
             },
           ),
