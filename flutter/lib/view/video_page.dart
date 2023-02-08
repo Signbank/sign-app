@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sign_app/app_config.dart';
 import 'package:sign_app/models/sign.dart';
 import 'package:sign_app/view/video_player.dart';
 
@@ -18,7 +19,7 @@ class _VideoPageState extends State<VideoPage>{
   @override
   void initState(){
     super.initState();
-    url = "https://signbank.cls.ru.nl/dictionary/protected_media/${widget.sign.videoUrl}";
+    url = Uri.https(signBankBaseMediaUrl, widget.sign.videoUrl).toString();
   }
 
 
@@ -28,7 +29,7 @@ class _VideoPageState extends State<VideoPage>{
       appBar: AppBar(
         title: Text(widget.sign.name),
       ),
-      body: VideoThumbnail(url: url),
+      body: VideoPlayerView(url: url),
     );
   }
 }

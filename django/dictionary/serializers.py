@@ -19,10 +19,18 @@ class NodeSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         """
-        Update a node instace
+        Update a node instance
         """
         instance.identifier = validated_data.get('identifier', instance.identifier)
         instance.group = validated_data.get('group', instance.group)
         instance.index = validated_data.get('index', instance.index)
 
         return instance
+
+
+class PropertyTypeSerializer(serializers.Serializer):
+    """
+    A class that encapsulates the list of nodes and adds the property type
+    """
+    group_type = serializers.CharField()
+    properties = NodeSerializer(many=True)

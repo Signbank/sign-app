@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sign_app/controller/property_list_controller.dart';
 import 'package:sign_app/models/property.dart';
 import 'package:sign_app/models/property_index.dart';
+import 'package:sign_app/view/sign_list.dart';
 
 class SearchPropertyList extends StatefulWidget {
   const SearchPropertyList({super.key});
@@ -13,11 +15,11 @@ class SearchPropertyList extends StatefulWidget {
 class _SearchPropertyListState extends State<SearchPropertyList>
     with TickerProviderStateMixin {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
+
   //Keep a copy of the list to display the properties.
   //Removing and adding items to this list allows for the animation
   final List<Property> _displayProperties = List.empty(growable: true);
 
-  late String title = '';
   late PropertyListController _con;
 
   @override
@@ -32,12 +34,11 @@ class _SearchPropertyListState extends State<SearchPropertyList>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Property group $title'),
+        title: Text(AppLocalizations.of(context)!.propertyGroup+_con.getPropertyType),
       ),
       body: _showBody(),
     );
   }
-
 
   void _refreshData(List<Property> properties) {
     _removeItems().whenComplete(() {
@@ -83,7 +84,8 @@ class _SearchPropertyListState extends State<SearchPropertyList>
       opacity: animation,
       child: InkWell(
         onTap: () {
-          _con.addChosenProperty(PropertyIndex(group: item.group, index: item.index));
+          _con.addChosenProperty(
+              PropertyIndex(group: item.group, index: item.index));
         },
         child: SizedBox(
           // Actual widget to display
@@ -97,6 +99,21 @@ class _SearchPropertyListState extends State<SearchPropertyList>
       ),
     );
   }
+
   ///Create function for the controller that refreshes the ui when the data is loaded
-  void callback() => _refreshData(_con.getPropertyList);
+  void callback(value) => setState(() {
+        if (value != null) {
+          var listOfSignIds = List<int>.from(value);
+          Navigator.of(context).pop();
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => SearchSignList(
+                      search: '',
+                      signIds: listOfSignIds,
+                    )),
+          );
+          return;
+        }
+        _refreshData(_con.getPropertyList);
+      });
 }

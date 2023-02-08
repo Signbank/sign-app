@@ -1,16 +1,9 @@
 import 'dart:convert';
+import 'package:sign_app/app_config.dart';
 import 'package:sign_app/models/sign.dart';
 import 'package:http/http.dart' as http;
 
 class SignListController {
-  // /// Instantiate singleton class
-  // static final SignListController _this = SignListController._();
-  //
-  // /// Create private constructor
-  // SignListController._();
-  //
-  // /// Static method to get singleton instance
-  // static SignListController get con => _this;
 
   SignListController();
 
@@ -23,18 +16,20 @@ class SignListController {
     try {
       http.Response response;
       if (_singIds.isNotEmpty) {
-        var url = Uri.parse('http://10.0.2.2:8080/dictionary/gloss/api/');
+        var url = Uri.https(signBankBaseUrl, 'dictionary/gloss/api/');
         var body = jsonEncode(_singIds);
 
         response = await http.post(url,
             headers: {"Content-Type": "application/json"}, body: body);
       } else {
-        var url =
-            'http://10.0.2.2:8080/dictionary/gloss/api/?search=$_searchTerm&dataset=5&results=50';
-        response = await http.get(Uri.parse(url));
+        var url = Uri.https(signBankBaseUrl, 'dictionary/gloss/api/', {'search':_searchTerm, 'dataset':5, 'results':50});
+        response = await http.get(url);
       }
 
-      if (response.statusCode == 200) {
+      if (response.statusCode != 200) {
+        throw Exception(
+            'Failed to load Signs. Error code: ${response.statusCode}');
+      }
         _signList = json
             .decode(response.body)
             .map((data) => Sign.fromJson(data))
@@ -42,17 +37,8 @@ class SignListController {
             .cast<Sign>();
 
         _callback();
-      } else {
-        throw Exception(
-            'Failed to load Signs. Error code: ${response.statusCode}');
-      }
     } catch(e){
       //todo implement error handling
-      return Future.delayed(const Duration(seconds: 3), () {
-        _signList = List.filled(5, const Sign(
-            name: 'name', videoUrl: 'vid url', imageUrl: 'im url'));
-        _callback();
-      });
     }
   }
 

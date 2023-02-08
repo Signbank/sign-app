@@ -1,71 +1,67 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:sign_app/app_config.dart';
 import 'package:sign_app/models/property.dart';
 import 'package:sign_app/models/property_index.dart';
+import 'package:sign_app/models/property_type_object.dart';
 
 class PropertyListController {
   PropertyListController();
 
+  PropertyTypeObject _propertyTypeObject =
+      PropertyTypeObject(groupType: '', properties: List.empty());
   late Function _callback;
-  List<Property> _properties = List.empty(growable: true);
   final List<PropertyIndex> _chosenProperties = List.empty(growable: true);
 
   Future<void> fetchProperties() async {
     try {
-      var url = Uri.parse('http://10.0.2.2:8000/search');
+      var url = Uri.parse(signAppBaseUrl+'search');
+
       var body = json.encode(_chosenProperties);
 
       var response = await http.post(url,
           headers: {"Content-Type": "application/json"}, body: body);
 
-      if (response.statusCode == 200) {
-        try {
-          _properties = json
-              .decode(response.body)
-              .map((data) => Property.fromJson(data))
-              .toList()
-              .cast<Property>();
-
-          _callback();
-        } on TypeError {
-          // List<int> listOfSignIds = jsonDecode(response.body).cast<int>();
-
-          // Check if the current widget is still on screen
-          // if(mounted) {
-          //   Navigator.of(context).pop();
-          //   Navigator.of(context).push(
-          //     MaterialPageRoute(
-          //         builder: (context) =>
-          //             SearchSignList(search: '', signIds: listOfSignIds,)),
-          //   );
-          // }
-        }
-      } else {
+      if (response.statusCode != 200) {
         throw Exception(
             'Failed to load Properties. Error code: ${response.statusCode}');
       }
+
+      var jsonResponse = json.decode(response.body);
+
+      if (jsonResponse.runtimeType != List) {
+        Iterable values = jsonResponse.values;
+        String groupType = values.first;
+        var propertyList = List<Property>.from(
+            jsonResponse['properties'].map((p) => Property.fromJson(p)));
+
+        _propertyTypeObject =
+            PropertyTypeObject(groupType: groupType, properties: propertyList);
+
+        _callback(null);
+        return;
+      }
+
+      List<int> listOfSignIds = jsonDecode(response.body).cast<int>();
+      _callback(listOfSignIds);
     } catch (e) {
       //todo implement error handling
-      return Future.delayed(const Duration(seconds: 3), () {
-        _properties = List.filled(5, const Property(identifier: 'a', group: 0, index: 0));
-        _callback();
-      });
+      print(e);
     }
   }
 
   ///Getters
-  List<Property> get getPropertyList => _properties;
-  Property getProperty(int index) => _properties[index];
+  List<Property> get getPropertyList => _propertyTypeObject.properties;
+
+  Property getProperty(int index) => _propertyTypeObject.properties[index];
+
+  String get getPropertyType => _propertyTypeObject.groupType;
 
   ///Setters
   void addChosenProperty(PropertyIndex propertyIndex) {
     _chosenProperties.add(propertyIndex);
     fetchProperties();
   }
-  void addProperty(Property property) {
-    _properties.add(property);
-  }
-  set setCallback(Function callback) => _callback = callback;
 
-  Property removeLastProperty() => _properties.removeLast();
+  set setCallback(Function callback) => _callback = callback;
 }

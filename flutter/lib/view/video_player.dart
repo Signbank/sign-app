@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class VideoThumbnail extends StatefulWidget {
+class VideoPlayerView extends StatefulWidget {
   final String url;
 
-  const VideoThumbnail({super.key, required this.url});
+  const VideoPlayerView({super.key, required this.url});
 
   @override
-  State<StatefulWidget> createState() => _VideoThumbnailState();
+  State<StatefulWidget> createState() => _VideoPlayerViewState();
 }
 
-class _VideoThumbnailState extends State<VideoThumbnail> {
+class _VideoPlayerViewState extends State<VideoPlayerView> {
   late VideoPlayerController controller;
   late Future<void> initializeVideoPlayerFuture;
 

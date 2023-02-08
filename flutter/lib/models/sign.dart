@@ -1,6 +1,4 @@
-import 'package:sign_app/models/base_model.dart';
-
-class Sign implements Model{
+class Sign{
   final String name;
   final String videoUrl;
   final String imageUrl;

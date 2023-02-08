@@ -5,6 +5,8 @@
     },
     "search": "Search",
     "searchByWord": "Search by word",
-    "searchByGesture": "Search by gesture",
-    "back": "Back"
+    "searchByGesture": "Search by property",
+    "back": "Back",
+    "searchFor": "Search for: ",
+    "propertyGroup": "Property: "
 }

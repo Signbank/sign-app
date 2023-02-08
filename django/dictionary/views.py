@@ -1,7 +1,7 @@
 from pathlib import Path
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from dictionary.serializers import NodeSerializer
+from dictionary.serializers import PropertyTypeSerializer
 from dictionary.graph import Graph
 from django.conf import settings
 
@@ -28,12 +28,33 @@ def search_with_sign_properties(request):
         for sign_id in node.sign_ids:
             list_of_sign_ids.append(sign_id)
 
-    if len(list_of_sign_ids) <= 5:
+    # Return signs ids when there are only a few left
+    # Or when there is only one option return the list of signs because there is no choice
+    if len(list_of_sign_ids) <= 5 or len(property_set) == 2:
         return Response(list_of_sign_ids)
 
-    # When there is only one option return the list of signs because there is no choice
-    if len(property_set) == 1:
-        return Response(list_of_sign_ids)
+    group_type = ''
 
-    serializer = NodeSerializer(property_set, many=True)
+    if property_set[0].group == 0:
+        group_type = 'location'
+
+    if property_set[0].group == 1:
+        group_type = 'movement'
+
+    if property_set[0].group == 2:
+        group_type = 'handshape'
+
+    pt = Propery_type(group_type, property_set)
+
+    serializer = PropertyTypeSerializer(pt)
+
     return Response(serializer.data)
+
+
+class Propery_type:
+    """
+    """
+
+    def __init__(self, group_type, nodes):
+        self.group_type = group_type
+        self.properties = nodes
