@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:sign_app/controller/property_list_controller.dart';
 import 'package:sign_app/models/property.dart';
 import 'package:sign_app/models/property_index.dart';
-import 'package:sign_app/view/sign_list.dart';
 
 class SearchPropertyList extends StatefulWidget {
   const SearchPropertyList({super.key});
@@ -16,104 +13,77 @@ class SearchPropertyList extends StatefulWidget {
 class _SearchPropertyListState extends State<SearchPropertyList>
     with TickerProviderStateMixin {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
-  final List<Property> _propertyList = List.empty(growable: true);
-  final List<PropertyIndex> _chosenProperties = List.empty(growable: true);
-  late String title;
+  //Keep a copy of the list to display the properties.
+  //Removing and adding items to this list allows for the animation
+  final List<Property> _displayProperties = List.empty(growable: true);
+
+  late String title = '';
+  late PropertyListController _con;
 
   @override
   void initState() {
     super.initState();
-    fetchProperties();
+
+    _con = PropertyListController();
+    _con.setCallback = callback;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Property group'),
+        title: Text('Property group $title'),
       ),
-      body: AnimatedList(
-        key: _listKey,
-        itemBuilder:
-            (BuildContext context, int index, Animation<double> animation) {
-          return slideIt(context, index, animation, _propertyList[index]);
-        },
-      ),
+      body: _showBody(),
     );
   }
 
-  Future<void> fetchProperties() async {
-    var url = Uri.parse('http://10.0.2.2:8000/search');
-    var body = json.encode(_chosenProperties);
-
-    var response = await http.post(url,
-        headers: {"Content-Type": "application/json"}, body: body);
-
-    if (response.statusCode == 200) {
-      try {
-        List<Property> data = json
-            .decode(response.body)
-            .map((data) => Property.fromJson(data))
-            .toList()
-            .cast<Property>();
-
-        _refreshData(data);
-      } on TypeError {
-
-        List<int> listOfSignIds = jsonDecode(response.body).cast<int>();
-
-        // Check if the current widget is still on screen
-        if(mounted) {
-          Navigator.of(context).pop();
-          Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) =>
-                    SearchSignList(search: '', signIds: listOfSignIds,)),
-          );
-        }
-      }
-    } else {
-      throw Exception(
-          'Failed to load Properties. Error code: ${response.statusCode}');
-    }
-  }
 
   void _refreshData(List<Property> properties) {
     _removeItems().whenComplete(() {
       for (var i = 0; i < properties.length; i++) {
         _listKey.currentState?.insertItem(i);
-        _propertyList.add(properties[i]);
+        _displayProperties.add(properties[i]);
       }
     });
   }
 
   Future<void> _removeItems() async {
-    if (_propertyList.isEmpty) {
+    if (_displayProperties.isEmpty) {
       return;
     }
 
-    for (var i = _propertyList.length - 1; i >= 0; i--) {
-      var p = _propertyList.removeLast();
+    for (var i = _displayProperties.length - 1; i >= 0; i--) {
+      var lastProperty = _displayProperties.removeLast();
       _listKey.currentState?.removeItem(
-          0, (_, animation) => slideIt(context, i, animation, p),
+          0, (_, animation) => _listItem(context, i, animation, lastProperty),
           duration: const Duration(milliseconds: 500));
     }
 
     return Future.delayed(const Duration(milliseconds: 500));
   }
 
-  Widget slideIt(BuildContext context, int index, animation, Property item) {
-    return SlideTransition(
-      position: CurvedAnimation(
-          parent: animation, curve: Curves.ease, reverseCurve: Curves.ease)
-          .drive(Tween<Offset>(
-        begin: const Offset(1, 0),
-        end: Offset.zero,
-      )),
+  Widget _showBody() {
+    if (_con.getPropertyList.isEmpty) {
+      _con.fetchProperties();
+      // return const Center(child: CircularProgressIndicator());
+    }
+
+    return AnimatedList(
+      key: _listKey,
+      itemBuilder:
+          (BuildContext context, int index, Animation<double> animation) {
+        return _listItem(context, index, animation, _con.getProperty(index));
+      },
+    );
+  }
+
+  Widget _listItem(BuildContext context, int index, animation, Property item) {
+    return FadeTransition(
+      opacity: animation,
       child: InkWell(
         onTap: () {
-          _chosenProperties.add(PropertyIndex(group: item.group, index: item.index));
-          fetchProperties();
+          _con.addChosenProperty(PropertyIndex(group: item.group, index: item.index));
         },
         child: SizedBox(
           // Actual widget to display
@@ -127,4 +97,6 @@ class _SearchPropertyListState extends State<SearchPropertyList>
       ),
     );
   }
+  ///Create function for the controller that refreshes the ui when the data is loaded
+  void callback() => _refreshData(_con.getPropertyList);
 }

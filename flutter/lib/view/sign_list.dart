@@ -1,4 +1,4 @@
-import 'package:mvc_application/view.dart';
+import 'package:flutter/material.dart';
 import 'package:sign_app/controller/sign_list_controller.dart';
 import 'package:sign_app/view/video_page.dart';
 
@@ -13,15 +13,16 @@ class SearchSignList extends StatefulWidget {
   State createState() => _SearchSignListState();
 }
 
-class _SearchSignListState extends StateMVC<SearchSignList> {
+class _SearchSignListState extends State<SearchSignList> {
   late SignListController _con;
 
   @override
   void initState() {
     super.initState();
-    _con = SignListController.con;
-    _con.searchTerm = widget.search;
-    _con.singIds = widget.signIds;
+    _con = SignListController();
+    _con.setCallback = callback;
+    _con.setSearchTerm = widget.search;
+    _con.setSignIds = widget.signIds;
   }
 
   @override
@@ -30,12 +31,13 @@ class _SearchSignListState extends StateMVC<SearchSignList> {
       appBar: AppBar(
         title: Text('Search for ${widget.search}'),
       ),
-      body: test(),
+      body: _showBody(),
     );
   }
 
-  Widget test() {
+  Widget _showBody() {
     if (_con.signList.isEmpty) {
+      _con.fetchSigns();
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -58,4 +60,7 @@ class _SearchSignListState extends StateMVC<SearchSignList> {
           );
         });
   }
+
+  ///Create function for the controller that refreshes the ui when the data is loaded
+  void callback() => setState(() {});
 }

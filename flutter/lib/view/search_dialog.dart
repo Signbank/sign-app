@@ -15,17 +15,6 @@ Future<void> searchDialogBuilder(BuildContext context) {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              onChanged: (value) {
-                searchInput = value;
-              },
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(32))),
-                hintText: AppLocalizations.of(context)!.searchByWord,
-              ),
-            ),
-            const Padding(padding: EdgeInsets.all(8)),
             SizedBox(
               height: 60,
               width: 400,
@@ -38,7 +27,18 @@ Future<void> searchDialogBuilder(BuildContext context) {
                             builder: (context) => const SearchPropertyList()));
                   },
                   child: Text(AppLocalizations.of(context)!.searchByGesture)),
-            )
+            ),
+            const Padding(padding: EdgeInsets.all(8)),
+            TextField(
+              onChanged: (value) {
+                searchInput = value;
+              },
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(32))),
+                hintText: AppLocalizations.of(context)!.searchByWord,
+              ),
+            ),
           ],
         ),
         actions: <Widget>[
