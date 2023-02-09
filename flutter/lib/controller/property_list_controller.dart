@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:sign_app/app_config.dart';
+import 'package:sign_app/url_config.dart';
 import 'package:sign_app/models/property.dart';
 import 'package:sign_app/models/property_index.dart';
 import 'package:sign_app/models/property_type_object.dart';
@@ -15,7 +15,7 @@ class PropertyListController {
 
   Future<void> fetchProperties() async {
     try {
-      var url = Uri.parse(signAppBaseUrl+'search');
+      var url = Uri.parse('$signAppBaseUrl/search');
 
       var body = json.encode(_chosenProperties);
 

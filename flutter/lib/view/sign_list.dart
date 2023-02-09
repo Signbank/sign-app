@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:sign_app/app_config.dart';
+import 'package:sign_app/url_config.dart';
 import 'package:sign_app/controller/sign_list_controller.dart';
 import 'package:sign_app/view/video_page.dart';
 
@@ -31,7 +31,7 @@ class _SearchSignListState extends State<SearchSignList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.searchFor+widget.search),
+        title: Text(AppLocalizations.of(context)!.searchFor + widget.search),
       ),
       body: _showBody(),
     );
@@ -55,7 +55,7 @@ class _SearchSignListState extends State<SearchSignList> {
                     width: 100,
                     height: 56,
                     child: Image.network(
-                      Uri.https(signBankBaseMediaUrl, _con.getSignImageUrl(index)).toString(),
+                      signBankBaseMediaUrl + _con.getSignImageUrl(index),
                     ),
                   ),
                   title: Text(_con.getSignName(index))),
