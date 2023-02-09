@@ -30,13 +30,7 @@ class PropertyListController {
       var jsonResponse = json.decode(response.body);
 
       if (jsonResponse.runtimeType != List) {
-        Iterable values = jsonResponse.values;
-        String groupType = values.first;
-        var propertyList = List<Property>.from(
-            jsonResponse['properties'].map((p) => Property.fromJson(p)));
-
-        _propertyTypeObject =
-            PropertyTypeObject(groupType: groupType, properties: propertyList);
+        _propertyTypeObject = PropertyTypeObject.fromJson(jsonDecode(response.body));
 
         _callback(null);
         return;
@@ -46,7 +40,6 @@ class PropertyListController {
       _callback(listOfSignIds);
     } catch (e) {
       //todo implement error handling
-      print(e);
     }
   }
 

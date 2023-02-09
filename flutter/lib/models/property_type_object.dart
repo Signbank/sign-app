@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:sign_app/models/property.dart';
 
 class PropertyTypeObject{
@@ -14,7 +12,7 @@ class PropertyTypeObject{
   factory PropertyTypeObject.fromJson(Map<String, dynamic> json){
     return PropertyTypeObject(
       groupType: json['group_type'],
-      properties: List<Property>.from(jsonDecode(json['properties']).map((item) => Property.fromJson(item))),
+      properties: List<Property>.from(json['properties'].map((item) => Property.fromJson(item))),
     );
   }
 }
