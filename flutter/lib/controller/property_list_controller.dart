@@ -1,58 +1,51 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:sign_app/url_config.dart';
-import 'package:sign_app/models/property.dart';
-import 'package:sign_app/models/property_index.dart';
-import 'package:sign_app/models/property_type_object.dart';
 
-class PropertyListController {
+import 'package:sign_app/controller/base_controller.dart';
+import 'package:sign_app/url_config.dart';
+
+class PropertyListController extends Controller {
   PropertyListController();
 
-  PropertyTypeObject _propertyTypeObject =
-      PropertyTypeObject(groupType: '', properties: List.empty());
+  String _title = '';
+  List<String> _properties = List.empty();
+
   late Function _callback;
-  final List<PropertyIndex> _chosenProperties = List.empty(growable: true);
+  final List<int> _chosenProperties = List.empty(growable: true);
 
   Future<void> fetchProperties() async {
-    try {
-      var url = Uri.parse('$signAppBaseUrl/search');
+    var returnData = await super.postRequest<Map<String, dynamic>>(
+        url: '$signAppBaseUrl/search',
+        body: _chosenProperties,
+        fromJsonFunction: (String json) { return jsonDecode(json);});
 
-      var body = json.encode(_chosenProperties);
-
-      var response = await http.post(url,
-          headers: {"Content-Type": "application/json"}, body: body);
-
-      if (response.statusCode != 200) {
-        throw Exception(
-            'Failed to load Properties. Error code: ${response.statusCode}');
-      }
-
-      var jsonResponse = json.decode(response.body);
-
-      if (jsonResponse.runtimeType != List) {
-        _propertyTypeObject = PropertyTypeObject.fromJson(jsonDecode(response.body));
-
-        _callback(null);
-        return;
-      }
-
-      List<int> listOfSignIds = jsonDecode(response.body).cast<int>();
-      _callback(listOfSignIds);
-    } catch (e) {
-      //todo implement error handling
+    if(returnData == null){
+     return;
     }
+
+    var typeOfData = returnData.keys.first;
+
+    if(typeOfData == 'signs'){
+      List<int> listOfSignIds = List<int>.from(returnData[typeOfData]);
+      _callback(listOfSignIds);
+      return;
+    }
+
+    _title = typeOfData;
+    _properties = List<String>.from(returnData[typeOfData]);
+    _callback(null);
+    return;
   }
 
   ///Getters
-  List<Property> get getPropertyList => _propertyTypeObject.properties;
+  List<String> get getPropertyList => _properties;
 
-  Property getProperty(int index) => _propertyTypeObject.properties[index];
+  String getProperty(int index) => _properties[index];
 
-  String get getPropertyType => _propertyTypeObject.groupType;
+  String get getPropertyType => _title;
 
   ///Setters
-  void addChosenProperty(PropertyIndex propertyIndex) {
-    _chosenProperties.add(propertyIndex);
+  void addChosenProperty(int index) {
+    _chosenProperties.add(index);
     fetchProperties();
   }
 

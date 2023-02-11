@@ -1,9 +1,8 @@
-import 'dart:convert';
+import 'package:sign_app/controller/base_controller.dart';
 import 'package:sign_app/url_config.dart';
 import 'package:sign_app/models/sign.dart';
-import 'package:http/http.dart' as http;
 
-class SignListController {
+class SignListController extends Controller {
   SignListController();
 
   List<Sign> _signList = List.empty();
@@ -12,34 +11,34 @@ class SignListController {
   late Function _callback;
 
   Future fetchSigns() async {
-    try {
-      http.Response response;
-      if (_singIds.isNotEmpty) {
-        var url = Uri.parse('$signBankBaseUrl/dictionary/gloss/api/');
-        var body = jsonEncode(_singIds);
-
-        response = await http.post(url,
-            headers: {"Content-Type": "application/json"}, body: body);
-      } else {
-        var url = Uri.https(signBankBaseUrl, 'dictionary/gloss/api/',
-            {'search': _searchTerm, 'dataset': 5, 'results': 50});
-        response = await http.get(url);
-      }
-
-      if (response.statusCode != 200) {
-        throw Exception(
-            'Failed to load Signs. Error code: ${response.statusCode}');
-      }
-      _signList = json
-          .decode(response.body)
-          .map((data) => Sign.fromJson(data))
-          .toList()
-          .cast<Sign>();
-
-      _callback();
-    } catch (e) {
-      //todo implement error handling
+    const endpointUrl = '/dictionary/gloss/api/';
+    late List<Sign>? returnData;
+    if (_singIds.isNotEmpty) {
+      returnData = await super.postRequest(
+          url: signBankBaseUrl + endpointUrl,
+          fromJsonFunction: _listFromJson,
+          body: _singIds);
+    } else {
+      returnData = await super.getRequest(
+          url: signBankBaseUrl +
+              endpointUrl +
+              "search=$_searchTerm,dataset=5,results=50",
+          fromJsonFunction: _listFromJson);
     }
+
+    if (returnData == null) {
+      return;
+    }
+
+    _signList = returnData;
+    _callback();
+  }
+
+  List<Sign> _listFromJson(List<dynamic> json) {
+    return json
+        .map((data) => Sign.fromJson(data as Map<String, dynamic>))
+        .toList()
+        .cast<Sign>();
   }
 
   ///Getters

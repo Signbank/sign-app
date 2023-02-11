@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sign_app/controller/property_list_controller.dart';
-import 'package:sign_app/models/property.dart';
-import 'package:sign_app/models/property_index.dart';
 import 'package:sign_app/view/sign_list.dart';
 
 class SearchPropertyList extends StatefulWidget {
@@ -18,7 +16,7 @@ class _SearchPropertyListState extends State<SearchPropertyList>
 
   //Keep a copy of the list to display the properties.
   //Removing and adding items to this list allows for the animation
-  final List<Property> _displayProperties = List.empty(growable: true);
+  final List<String> _displayProperties = List.empty(growable: true);
 
   late PropertyListController _con;
 
@@ -40,7 +38,7 @@ class _SearchPropertyListState extends State<SearchPropertyList>
     );
   }
 
-  void _refreshData(List<Property> properties) {
+  void _refreshData(List<String> properties) {
     _removeItems().whenComplete(() {
       for (var i = 0; i < properties.length; i++) {
         _listKey.currentState?.insertItem(i);
@@ -79,20 +77,19 @@ class _SearchPropertyListState extends State<SearchPropertyList>
     );
   }
 
-  Widget _listItem(BuildContext context, int index, animation, Property item) {
+  Widget _listItem(BuildContext context, int index, animation, String item) {
     return FadeTransition(
       opacity: animation,
       child: InkWell(
         onTap: () {
-          _con.addChosenProperty(
-              PropertyIndex(group: item.group, index: item.index));
+          _con.addChosenProperty(index);
         },
         child: SizedBox(
           // Actual widget to display
           height: 64,
           child: Card(
             child: Center(
-              child: Text(item.identifier),
+              child: Text(item),
             ),
           ),
         ),
