@@ -4,34 +4,32 @@ import 'package:sign_app/url_config.dart';
 import 'package:sign_app/controller/sign_list_controller.dart';
 import 'package:sign_app/view/video_page.dart';
 
-class SearchSignList extends StatefulWidget {
-  const SearchSignList(
-      {super.key, required this.search, required this.signIds});
+class SearchSignListView extends StatefulWidget {
+  const SearchSignListView(
+      {super.key, String searchTerm = '', List<int> signIds = const []}) : _signIds = signIds, _searchTerm = searchTerm;
 
-  final String search;
-  final List<int> signIds;
+  final String _searchTerm;
+  final List<int> _signIds;
 
   @override
-  State createState() => _SearchSignListState();
+  State createState() => _SearchSignListViewState();
 }
 
-class _SearchSignListState extends State<SearchSignList> {
+class _SearchSignListViewState extends State<SearchSignListView> {
   late SignListController _con;
 
   @override
   void initState() {
     super.initState();
     _con = SignListController();
-    _con.setCallback = callback;
-    _con.setSearchTerm = widget.search;
-    _con.setSignIds = widget.signIds;
+    _con.setCallback = setState;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.searchFor + widget.search),
+        title: Text(AppLocalizations.of(context)!.searchFor + widget._searchTerm),
       ),
       body: _showBody(),
     );
@@ -39,7 +37,7 @@ class _SearchSignListState extends State<SearchSignList> {
 
   Widget _showBody() {
     if (_con.signList.isEmpty) {
-      _con.fetchSigns();
+      _con.fetchSigns(searchTerm: widget._searchTerm, singIds: widget._signIds);
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -63,7 +61,4 @@ class _SearchSignListState extends State<SearchSignList> {
           );
         });
   }
-
-  ///Create function for the controller that refreshes the ui when the data is loaded
-  void callback() => setState(() {});
 }

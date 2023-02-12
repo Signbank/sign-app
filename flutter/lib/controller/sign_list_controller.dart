@@ -6,23 +6,21 @@ class SignListController extends Controller {
   SignListController();
 
   List<Sign> _signList = List.empty();
-  late String _searchTerm;
-  late List<int> _singIds;
   late Function _callback;
 
-  Future fetchSigns() async {
+  void fetchSigns({List<int> singIds = const [], String searchTerm = ''}) async {
     const endpointUrl = '/dictionary/gloss/api/';
     late List<Sign>? returnData;
-    if (_singIds.isNotEmpty) {
+    if (singIds.isNotEmpty) {
       returnData = await super.postRequest(
           url: signBankBaseUrl + endpointUrl,
           fromJsonFunction: _listFromJson,
-          body: _singIds);
+          body: singIds);
     } else {
       returnData = await super.getRequest(
           url: signBankBaseUrl +
               endpointUrl +
-              "search=$_searchTerm,dataset=5,results=50",
+              "search=$searchTerm,dataset=5,results=50",
           fromJsonFunction: _listFromJson);
     }
 
@@ -52,8 +50,4 @@ class SignListController extends Controller {
 
   ///Setters
   set setCallback(Function callback) => _callback = callback;
-
-  set setSearchTerm(String searchTerm) => _searchTerm = searchTerm;
-
-  set setSignIds(List<int> signIds) => _singIds = signIds;
 }

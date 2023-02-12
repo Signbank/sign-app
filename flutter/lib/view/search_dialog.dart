@@ -24,7 +24,7 @@ Future<void> searchDialogBuilder(BuildContext context) {
                     Navigator.of(context).pop();
                     Navigator.of(context).push(
                         MaterialPageRoute(
-                            builder: (context) => const SearchPropertyList()));
+                            builder: (context) => const SearchPropertyListView()));
                   },
                   child: Text(AppLocalizations.of(context)!.searchByGesture)),
             ),
@@ -53,7 +53,7 @@ Future<void> searchDialogBuilder(BuildContext context) {
               Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => SearchSignList(search: searchInput, signIds: const [],)),
+                    builder: (context) => SearchSignListView(searchTerm: searchInput)),
               );
             },
           ),

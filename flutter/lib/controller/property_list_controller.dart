@@ -6,13 +6,13 @@ import 'package:sign_app/url_config.dart';
 class PropertyListController extends Controller {
   PropertyListController();
 
-  String _title = '';
+  String _propertyType = '';
   List<String> _properties = List.empty();
 
   late Function _callback;
   final List<int> _chosenProperties = List.empty(growable: true);
 
-  Future<void> fetchProperties() async {
+  void fetchProperties() async {
     var returnData = await super.postRequest<Map<String, dynamic>>(
         url: '$signAppBaseUrl/search',
         body: _chosenProperties,
@@ -30,7 +30,7 @@ class PropertyListController extends Controller {
       return;
     }
 
-    _title = typeOfData;
+    _propertyType = typeOfData;
     _properties = List<String>.from(returnData[typeOfData]);
     _callback(null);
     return;
@@ -41,7 +41,7 @@ class PropertyListController extends Controller {
 
   String getProperty(int index) => _properties[index];
 
-  String get getPropertyType => _title;
+  String get getPropertyType => _propertyType;
 
   ///Setters
   void addChosenProperty(int index) {

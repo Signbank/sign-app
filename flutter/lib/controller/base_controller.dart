@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class Controller {
+  @protected
   Future<T?> getRequest<T>(
       {required String url, required Function fromJsonFunction}) async {
     return _parseResponse(
@@ -9,6 +11,7 @@ class Controller {
         fromJsonFunction: fromJsonFunction);
   }
 
+  @protected
   Future<T?> postRequest<T>(
       {required String url,
       required dynamic body,

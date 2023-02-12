@@ -3,14 +3,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sign_app/controller/property_list_controller.dart';
 import 'package:sign_app/view/sign_list.dart';
 
-class SearchPropertyList extends StatefulWidget {
-  const SearchPropertyList({super.key});
+class SearchPropertyListView extends StatefulWidget {
+  const SearchPropertyListView({super.key});
 
   @override
-  State<SearchPropertyList> createState() => _SearchPropertyListState();
+  State<SearchPropertyListView> createState() => _SearchPropertyListViewState();
 }
 
-class _SearchPropertyListState extends State<SearchPropertyList>
+class _SearchPropertyListViewState extends State<SearchPropertyListView>
     with TickerProviderStateMixin {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
 
@@ -104,9 +104,8 @@ class _SearchPropertyListState extends State<SearchPropertyList>
           Navigator.of(context).pop();
           Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (context) => SearchSignList(
-                      search: '',
-                      signIds: listOfSignIds,
+                builder: (context) => SearchSignListView(
+                      signIds: listOfSignIds
                     )),
           );
           return;
