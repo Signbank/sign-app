@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class Controller {
+abstract class Controller {
   @protected
   Future<T?> getRequest<T>(
       {required String url, required Function fromJsonFunction}) async {
-    return _parseResponse(
+    return _parseResponse<T>(
         response: await http.get(Uri.parse(url)),
         fromJsonFunction: fromJsonFunction);
   }
@@ -19,7 +19,7 @@ class Controller {
       Map<String, String> headers = const {
         "Content-Type": "application/json"
       }}) async {
-    return _parseResponse(
+    return _parseResponse<T>(
         response: await http.post(
           Uri.parse(url),
           headers: headers,
@@ -38,7 +38,7 @@ class Controller {
 
       return fromJsonFunction(jsonDecode(response.body));
     } catch (e) {
-      //todo implement error handling
+      //todo implement user friendly error handling
     }
 
     return null;
