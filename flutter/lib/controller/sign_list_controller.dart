@@ -14,14 +14,14 @@ class SignListController extends Controller {
     if (singIds.isNotEmpty) {
       returnData = await super.postRequest(
           url: signBankBaseUrl + endpointUrl,
-          fromJsonFunction: _listFromJson,
+          fromJsonFunction: Sign.listFromJson,
           body: singIds);
     } else {
       returnData = await super.getRequest(
           url: signBankBaseUrl +
               endpointUrl +
               "search=$searchTerm,dataset=5,results=50",
-          fromJsonFunction: _listFromJson);
+          fromJsonFunction: Sign.listFromJson);
     }
 
     if (returnData == null) {
@@ -30,13 +30,6 @@ class SignListController extends Controller {
 
     _signList = returnData;
     _callback();
-  }
-
-  List<Sign> _listFromJson(List<dynamic> json) {
-    return json
-        .map((data) => Sign.fromJson(data as Map<String, dynamic>))
-        .toList()
-        .cast<Sign>();
   }
 
   ///Getters

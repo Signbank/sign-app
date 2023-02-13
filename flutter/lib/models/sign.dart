@@ -16,4 +16,11 @@ class Sign{
       imageUrl: json['image_url'],
     );
   }
+
+  static List<Sign> listFromJson(List<dynamic> json) {
+    return json
+        .map((data) => Sign.fromJson(data as Map<String, dynamic>))
+        .toList()
+        .cast<Sign>();
+  }
 }
