@@ -54,14 +54,14 @@ def get_all_translations(conn):
 
 
 def set_spoken_value(item, complete_list, spoken_value):
+    sign_id = item.pop(0)
     try:
-        index = complete_list.index(item)
+        current_value = complete_list[sign_id][0]
 
-        current_value = complete_list[index][1]
         if current_value < spoken_value:
-            complete_list[index][1] = spoken_value
-    except ValueError:
-        complete_list.append(item)
+            complete_list[sign_id][0] = spoken_value
+    except KeyError:
+        complete_list[sign_id] = item
 
 
 if __name__ == '__main__':
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     locations = {}
     movement = {}
     handshapes = {}
-    complete_list = []
+    complete_list = {}
 
     try:
         conn = sqlite3.connect(db_file)
