@@ -1,13 +1,16 @@
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:http/http.dart';
+
 abstract class Controller {
+ Client client = Client();
+
   @protected
   Future<T?> getRequest<T>(
       {required String url, required Function fromJsonFunction}) async {
     return _parseResponse<T>(
-        response: await http.get(Uri.parse(url)),
+        response: await client.get(Uri.parse(url)),
         fromJsonFunction: fromJsonFunction);
   }
 
@@ -20,7 +23,7 @@ abstract class Controller {
         "Content-Type": "application/json"
       }}) async {
     return _parseResponse<T>(
-        response: await http.post(
+        response: await client.post(
           Uri.parse(url),
           headers: headers,
           body: jsonEncode(body),
@@ -29,7 +32,7 @@ abstract class Controller {
   }
 
   T? _parseResponse<T>(
-      {required http.Response response, required Function fromJsonFunction}) {
+      {required Response response, required Function fromJsonFunction}) {
     try {
       if (response.statusCode != 200) {
         throw Exception(

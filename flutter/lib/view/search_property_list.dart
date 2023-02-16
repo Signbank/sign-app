@@ -25,8 +25,7 @@ class _SearchPropertyListViewState extends State<SearchPropertyListView>
   void initState() {
     super.initState();
 
-    _con = PropertyListController();
-    _con.setCallback = callback;
+    _con = PropertyListController(callback);
   }
 
   @override
