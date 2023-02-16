@@ -1,0 +1,42 @@
+[MAIN]
+
+# Specify a score threshold under which the program will exit with error.
+fail-under= 10
+
+# Files or directories matching the regular expression patterns are skipped.
+# The regex matches against base names, not paths. The default value ignores
+# Emacs file locks
+ignore-patterns=^\.#|wsgi|asgi|apps|manage|\d{4}_initial|__init__
+
+# List of plugins (as comma separated values of python module names) to load,
+# usually to register additional checkers.
+load-plugins=pylint_django 
+
+django-settings-module=signapp.settings
+
+[CLASSES]
+
+# List of method names used to declare (i.e. assign) instance attributes.
+defining-attr-methods=__init__,
+                      __new__,
+                      setUp,
+                      __post_init__
+
+[MESSAGES CONTROL]
+
+# Disable the message, report, category or checker with the given id(s). You
+# can either give multiple identifier separated by comma (,) or put this option
+# multiple time (only on the command line, not in the configuration file where
+# it should appear only once).
+disable=F0001, C0114, W0223
+
+[DESIGN]
+
+# List of regular expressions of class ancestor names to ignore when counting
+# public methods (see R0903)
+exclude-too-few-public-methods=yes
+
+[FORMAT]
+
+# Maximum number of characters on a single line.
+max-line-length=200

@@ -1,0 +1,12 @@
+{
+    "sign_app": "Sign App",
+    "@sign_app": {
+        "description": "Name of the application"
+    },
+    "search": "Search",
+    "searchByWord": "Search by word",
+    "searchByGesture": "Search by property",
+    "back": "Back",
+    "searchFor": "Search for: ",
+    "propertyGroup": "Property: "
+}

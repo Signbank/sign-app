@@ -1,0 +1,23 @@
+[run]
+source = .
+plugins = django_coverage_plugin
+
+omit = 
+	*/node_modules/*
+	*/env/*
+	*/venv/*
+	*.html
+	*__init__.py
+	manage.py
+	*/migrations/*
+	*/test.py
+	requirements.txt
+	*settings.py
+	*asgi.py
+	*wsgi.py
+	*urls.py
+	*apps.py
+
+[report]
+fail_under = 80
+show_missing = True
