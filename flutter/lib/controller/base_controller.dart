@@ -38,7 +38,7 @@ abstract class Controller {
 
       return fromJsonFunction(jsonDecode(response.body));
     } catch (e) {
-      //todo implement user friendly error handling
+      //TODO: implement user friendly error handling
     }
 
     return null;
