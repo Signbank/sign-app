@@ -159,39 +159,37 @@ class NodeTestCase(TestCase):
 
 
 def set_up_test_tree():
+    """
+    Setup all nodes for the test tree
+    """
     tree = Tree()
 
-    m_49 = Node(49, ['1', '6'])
-    m_55 = Node(55, ['2'])
-    m_51 = Node(51, ['3'])
-    m_16 = Node(16, ['4'])
-    m_8 = Node(8, ['5'])
+    # create edges
+    edges = [
+        (49, 15, 3), (49, 15, 4), (55, 3, 15), (51, 3, 5), (16, 3, 6), (8, 8, 15)
+    ]
 
-    h_15 = Node(15, ['1', '6'])
-    h_15_2 = Node(15, ['2'])
-    h_15_3 = Node(15, ['5'])
-    h_5 = Node(5, ['3'])
-    h_6 = Node(6, ['4'])
+    parent_node = Node('p')
 
-    l_3_1 = Node(3, ['1'])
-    l_3_2 = Node(3, ['2'])
-    l_3_3 = Node(3, ['3'])
-    l_3_4 = Node(3, ['4'])
-    l_4 = Node(4, ['6'])
-    l_8 = Node(8, ['5'])
+    # add edges to nodes
+    for first_identifier, second_identifier, third_identifier in edges:
+        first_node = Node(first_identifier)
+        second_node = Node(second_identifier)
+        third_node = Node(third_identifier)
 
-    m_49.edges = [h_15]
-    m_55.edges = [l_3_2]
-    m_51.edges = [l_3_3]
-    m_16.edges = [l_3_4]
-    m_8.edges = [l_8]
+        for edge in parent_node.edges:
+            if edge.identifier == first_identifier:
+                first_node = edge
 
-    h_15.edges = [l_3_1, l_4]
+        for edge in first_node.edges:
+            if edge.identifier == second_identifier:
+                second_node = edge
 
-    l_3_2.edges = [h_15_2]
-    l_3_3.edges = [h_5]
-    l_3_4.edges = [h_6]
-    l_8.edges = [h_15_3]
+        parent_node.add_edge(first_node)
 
-    tree.nodes = [m_49, m_55, m_51, m_16, m_8]
+        first_node.add_edge(second_node)
+
+        second_node.add_edge(third_node)
+
+    tree.nodes = parent_node.edges
     return tree

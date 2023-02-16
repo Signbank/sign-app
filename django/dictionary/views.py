@@ -8,7 +8,7 @@ from django.conf import settings
 # Create a global variable this keeps the tree in memory
 tree = Tree()
 file_path = Path(settings.BASE_DIR) / 'Data/sign_property_data.txt'
-# tree.create_from_file(file_path)
+tree.create_from_file(file_path)
 
 
 @api_view(['POST'])

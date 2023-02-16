@@ -28,7 +28,7 @@ defining-attr-methods=__init__,
 # can either give multiple identifier separated by comma (,) or put this option
 # multiple time (only on the command line, not in the configuration file where
 # it should appear only once).
-disable=F0001, C0114
+disable=F0001, C0114, W0223
 
 [DESIGN]
 

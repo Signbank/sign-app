@@ -58,28 +58,31 @@ class Tree:
             if sign == []:
                 return 0
 
-            for j, property in enumerate(sign):
+            for j, sign_property in enumerate(sign):
                 property_weight_dictionary = list_of_weight_dictionaries[j]
-                if property in property_weight_dictionary:
-                    property_weight_dictionary[property] += weight
+                if sign_property in property_weight_dictionary:
+                    property_weight_dictionary[sign_property] += weight
                 else:
-                    property_weight_dictionary[property] = weight
+                    property_weight_dictionary[sign_property] = weight
 
             if i >= NUMBER_OF_SET_TO_US or i == len(node.sign_ids)-1:
-                return self.get_index_of_best_spread_set(list_of_weight_dictionaries)
-                break
+                best_set = self.get_index_of_best_spread_set(list_of_weight_dictionaries)
+                return best_set
+
+        # Return base value
+        return 0
 
     def get_index_of_best_spread_set(self, list_of_weight_dictionaries):
         """
         This method check which dictionary has the best spread and return the index of that property
         """
-        best_set = 999999999
+        best_set_value = -1
         best_index = 0
         for i, dic in enumerate(list_of_weight_dictionaries):
             weight_list = list(dic.values())
             std = np.std(weight_list)
-            if std <= best_set:
-                best_set = std
+            if std <= best_set_value or best_set_value == -1:
+                best_set_value = std
                 best_index = i
 
         return best_index
@@ -94,9 +97,9 @@ class Tree:
             sign = dictionary_of_signs[sign_id]
             if sign == []:
                 break
-            property = sign.pop(best_index)
+            sign_property = sign.pop(best_index)
 
-            edge = Node(property, [sign_id])
+            edge = Node(sign_property, [sign_id])
             node.add_edge(edge)
 
         for edge in node.edges:
@@ -140,10 +143,13 @@ class Node:
     the other properties that are used in the same sign as this property
     """
 
-    def __init__(self, identifier, sign_ids=[]):
+    def __init__(self, identifier, sign_ids=None):
         self.identifier = identifier
         self.edges = []
-        self.sign_ids = sign_ids
+        if sign_ids is None:
+            self.sign_ids = []
+        else:
+            self.sign_ids = sign_ids
 
     def add_edge(self, new_edge):
         """
