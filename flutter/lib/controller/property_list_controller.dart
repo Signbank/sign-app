@@ -1,47 +1,42 @@
-import 'dart:convert';
-
 import 'package:sign_app/controller/base_controller.dart';
+import 'package:sign_app/models/property.dart';
 import 'package:sign_app/url_config.dart';
 
 class PropertyListController extends Controller {
-  PropertyListController();
+  PropertyListController(this._callback);
 
-  String _propertyType = '';
-  List<String> _properties = List.empty();
+  List<Property> _properties = List.empty();
 
-  late Function _callback;
+  final Function _callback;
   final List<int> _chosenProperties = List.empty(growable: true);
 
-  void fetchProperties() async {
-    var returnData = await super.postRequest<Map<String, dynamic>>(
+  Future<void> fetchProperties() async {
+    var returnData = await super.postRequest<List<Property>>(
         url: '$signAppBaseUrl/search',
         body: _chosenProperties,
-        fromJsonFunction: (String json) { return jsonDecode(json);});
+        fromJsonFunction: Property.listFromJson);
 
-    if(returnData == null){
-     return;
-    }
-
-    var typeOfData = returnData.keys.first;
-
-    if(typeOfData == 'signs'){
-      List<int> listOfSignIds = List<int>.from(returnData[typeOfData]);
-      _callback(listOfSignIds);
+    if (returnData == null) {
       return;
     }
 
-    _propertyType = typeOfData;
-    _properties = List<String>.from(returnData[typeOfData]);
+    if (returnData.isEmpty) {
+      var lastChosenProperty = _properties[_chosenProperties.last];
+      _callback(lastChosenProperty.signIDs);
+      return;
+    }
+
+    _properties = returnData;
     _callback(null);
     return;
   }
 
   ///Getters
-  List<String> get getPropertyList => _properties;
+  List<Property> get getPropertyList => _properties;
 
-  String getProperty(int index) => _properties[index];
+  Property getProperty(int index) => _properties[index];
 
-  String get getPropertyType => _propertyType;
+  String getPropertyName(int index) => _properties[index].identifier;
 
   ///Setters
   void addChosenProperty(int index) {
@@ -49,5 +44,5 @@ class PropertyListController extends Controller {
     fetchProperties();
   }
 
-  set setCallback(Function callback) => _callback = callback;
+  set setProperties(properties) => _properties = properties;
 }

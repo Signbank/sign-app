@@ -3,12 +3,12 @@ import 'package:sign_app/url_config.dart';
 import 'package:sign_app/models/sign.dart';
 
 class SignListController extends Controller {
-  SignListController();
+  SignListController(this._callback);
 
   List<Sign> _signList = List.empty();
-  late Function _callback;
+  Function _callback;
 
-  void fetchSigns({List<int> singIds = const [], String searchTerm = ''}) async {
+  Future<void> fetchSigns({List<int> singIds = const [], String searchTerm = ''}) async {
     const endpointUrl = '/dictionary/gloss/api/';
     late List<Sign>? returnData;
     if (singIds.isNotEmpty) {
@@ -20,7 +20,7 @@ class SignListController extends Controller {
       returnData = await super.getRequest(
           url: signBankBaseUrl +
               endpointUrl +
-              "search=$searchTerm,dataset=5,results=50",
+              "?search=$searchTerm&dataset=5&results=50",
           fromJsonFunction: Sign.listFromJson);
     }
 

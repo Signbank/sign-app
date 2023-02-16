@@ -1,0 +1,39 @@
+site_name: Sign app wiki 
+
+nav:
+  - Home: index.md
+  - Documentation: documentation.md
+  - Installation guide: installation_guide.md
+  - API documentation: api.md
+
+theme:
+  name: 'material'
+  logo: assets/logo.png
+  palette:
+    # Palette toggle for light mode
+    - scheme: ru_red
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+      
+markdown_extensions:
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - toc:
+      toc_depth: 3
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra_css:
+  - stylesheets/extra.css

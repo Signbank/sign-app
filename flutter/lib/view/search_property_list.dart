@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sign_app/controller/property_list_controller.dart';
+import 'package:sign_app/models/property.dart';
 import 'package:sign_app/view/sign_list.dart';
 
 class SearchPropertyListView extends StatefulWidget {
@@ -16,7 +17,7 @@ class _SearchPropertyListViewState extends State<SearchPropertyListView>
 
   //Keep a copy of the list to display the properties.
   //Removing and adding items to this list allows for the animation
-  final List<String> _displayProperties = List.empty(growable: true);
+  final List<Property> _displayProperties = List.empty(growable: true);
 
   late PropertyListController _con;
 
@@ -24,21 +25,20 @@ class _SearchPropertyListViewState extends State<SearchPropertyListView>
   void initState() {
     super.initState();
 
-    _con = PropertyListController();
-    _con.setCallback = callback;
+    _con = PropertyListController(callback);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.propertyGroup+_con.getPropertyType),
+        title: Text(AppLocalizations.of(context)!.propertyGroup),
       ),
       body: _showBody(),
     );
   }
 
-  void _refreshData(List<String> properties) {
+  void _refreshData(List<Property> properties) {
     _removeItems().whenComplete(() {
       for (var i = 0; i < properties.length; i++) {
         _listKey.currentState?.insertItem(i);
@@ -55,7 +55,7 @@ class _SearchPropertyListViewState extends State<SearchPropertyListView>
     for (var i = _displayProperties.length - 1; i >= 0; i--) {
       var lastProperty = _displayProperties.removeLast();
       _listKey.currentState?.removeItem(
-          0, (_, animation) => _listItem(context, i, animation, lastProperty),
+          0, (_, animation) => _listItem(context, i, animation, lastProperty.identifier),
           duration: const Duration(milliseconds: 500));
     }
 
@@ -72,7 +72,7 @@ class _SearchPropertyListViewState extends State<SearchPropertyListView>
       key: _listKey,
       itemBuilder:
           (BuildContext context, int index, Animation<double> animation) {
-        return _listItem(context, index, animation, _con.getProperty(index));
+        return _listItem(context, index, animation, _con.getPropertyName(index));
       },
     );
   }
