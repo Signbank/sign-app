@@ -22,7 +22,7 @@ class _SearchSignListViewState extends State<SearchSignListView> {
   void initState() {
     super.initState();
     _con = SignListController();
-    _con.setCallback = setState;
+    _con.setCallback = callback;
   }
 
   @override
@@ -61,4 +61,6 @@ class _SearchSignListViewState extends State<SearchSignListView> {
           );
         });
   }
+
+  void callback() => setState(() {});
 }

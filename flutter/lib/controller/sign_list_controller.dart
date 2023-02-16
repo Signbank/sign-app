@@ -20,7 +20,7 @@ class SignListController extends Controller {
       returnData = await super.getRequest(
           url: signBankBaseUrl +
               endpointUrl +
-              "search=$searchTerm,dataset=5,results=50",
+              "?search=$searchTerm&dataset=5&results=50",
           fromJsonFunction: Sign.listFromJson);
     }
 
