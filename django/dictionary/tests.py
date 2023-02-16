@@ -64,15 +64,20 @@ class TreeTestCase(TestCase):
     """ Test case for the tree data structure"""
 
     def setUp(self):
+        """Create a test file to est up the tree with and create a tree to compare it to"""
         with open('test_tree.txt', 'w', encoding='utf-8') as file:
             file.write('{"1":[5, 3, 49, 15], "2":[4, 3, 55, 15], "3":[3, 3, 51, 5], "4":[2, 3, 16, 6], "5":[1, 8, 8, 15],"6":[5, 4, 49, 15]}')
             file.close()
         self.expected = set_up_test_tree()
 
     def tearDown(self):
+        """Remove the test file"""
         os.remove('test_tree.txt')
 
     def test_tree_create_from_file(self):
+        """
+        Test if the tree creation from a file works
+        """
         actual = Tree()
         file_path = Path(settings.BASE_DIR) / 'test_tree.txt'
         actual.create_from_file(file_path)
@@ -168,24 +173,25 @@ def set_up_test_tree():
     h_5 = Node(5, ['3'])
     h_6 = Node(6, ['4'])
 
-    l_3 = Node(3, ['1'])
-    l_3 = Node(3, ['2'])
-    l_3 = Node(3, ['3'])
-    l_3 = Node(3, ['3'])
+    l_3_1 = Node(3, ['1'])
+    l_3_2 = Node(3, ['2'])
+    l_3_3 = Node(3, ['3'])
+    l_3_4 = Node(3, ['4'])
     l_4 = Node(4, ['6'])
     l_8 = Node(8, ['5'])
 
     m_49.edges = [h_15]
-    m_55.edges = [h_15_2]
-    m_51.edges = [h_5]
-    m_16.edges = [h_6]
-    m_8.edges = [h_15_3]
+    m_55.edges = [l_3_2]
+    m_51.edges = [l_3_3]
+    m_16.edges = [l_3_4]
+    m_8.edges = [l_8]
 
-    h_15.edges = [l_3, l_4]
-    h_15_2.edges = [l_3]
-    h_15_3.edges = [l_8]
-    h_5.edges = [l_3]
-    h_6.edges = [l_3]
+    h_15.edges = [l_3_1, l_4]
+
+    l_3_2.edges = [h_15_2]
+    l_3_3.edges = [h_5]
+    l_3_4.edges = [h_6]
+    l_8.edges = [h_15_3]
 
     tree.nodes = [m_49, m_55, m_51, m_16, m_8]
     return tree
