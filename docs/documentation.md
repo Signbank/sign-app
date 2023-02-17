@@ -502,9 +502,8 @@ View <-- Urls
 
 class Node{
   + String identifier
-  + String group
-  + List signIDs
-  + List edges
+  + List~int~ signIDs
+  + List~Node~ edges
   + addEdge(Node newEdge)
 }
 
@@ -515,10 +514,7 @@ class Tree{
 
 class NodeSerializer{
   + String identifier
-  + String group
-  + List signIDs
-  + create(validatedData) Node
-  + update(instance, validatedData) Node
+  + List~int~ signIDs
 }
 
 class View{

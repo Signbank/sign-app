@@ -8,12 +8,12 @@ The sign app is a free and open-source public interface for the [Global Signbank
 
 ## Documentation
 
-See the [wiki](https://github.com/Signbank/sign-app/wiki) for an installation guide and further documentation.
+See the [wiki](https://signbank.github.io/sign-app/) for an installation guide and further documentation.
 
-## Roadmap
+## Known issues and Roadmap
 
-See [open issues](https://github.com/Signbank/sign-app/issues) for the feature backlog.
+See the [known issues](https://github.com/Signbank/sign-app/issues) and the [project page](https://github.com/orgs/Signbank/projects/2) for the feature backlog.
 
 ## License
 
-Distributed under the ... See `LICENSE.txt` for more information.
+Distributed under the BSD 3-Clause license. See **LICENSE.md** for more information.
