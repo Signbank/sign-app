@@ -37,7 +37,7 @@ For other items, see the options below.
     <div class="card">
       <div class="container">
         <h4><b>Road map</b></h4>
-        <p>For an idea of all the upcoming features and bug fixes see the project pages.</p>
+        <p>For an idea of all the upcoming features see the project pages.</p>
         <a href="https://github.com/orgs/Signbank/projects/2">Project &#10548;</a>
       </div>
     </div> 
