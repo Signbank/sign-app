@@ -252,6 +252,89 @@ The user wants to know the meaning of a sign.
 </tbody>
 </table>
 
+### Sign language learning quiz
+<table>
+<tbody>
+  <tr>
+    <td><b>Primary actor</b></td>
+    <td colspan="2">User</td>
+  </tr>
+  <tr>
+    <td><b>Brief Description</b></td>
+    <td colspan="2">
+    The user can access a list of signs and select which signs they want to practice.
+    The quiz will present a series of questions, each showing a sign, and the user must select the correct meaning from a list of multiple-choice answers.
+    After each question, the quiz will provide feedback to the user, indicating whether their answer was correct or incorrect, and will also provide the correct answer if the user answered incorrectly.
+    If users make mistakes during the quiz, they have the opportunity to retry those signs once the quiz is finished.
+    </td>
+  </tr>
+  <tr>
+    <td><b>Pre conditions</b></td>
+    <td colspan="2">The user has access to a list of signs to learn.</td>
+  </tr>
+  <tr>
+    <td><b>Post conditions</b></td>
+    <td colspan="2">The user progression of the selected list is saved.</td>
+  </tr>
+  <tr>
+    <td><b>Main Succes Scenario</b></td>
+    <td><b>Actor Action</b></td>
+    <td><b>System Responsibility</b></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>1. The user navigates to the sign list page.</td>
+    <td>2. The system shows with all the list available to the user.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>3. The user selects a list from which they would like to learn the signs.</td>
+    <td>4. The system navigates to the quiz page of the first new sign.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td>5. The system shows a video and asks the user to identify the sign in the video.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>6. The user tries to identify the sign.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>7. The user confirms their selection.</td>
+    <td>8. The system shows that the selection of the user was correct.</td>
+  </tr>
+  <tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td>9. The system asks the users if they would like to continue.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>10. The user confirms that they would like to continue.</td>
+    <td>11. The system goes to the next sign in the list. The use case continues at step 5.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td>12. The system will indicate to the user that they have completed the list once they have viewed all signs.</td>
+  </tr>
+  <tr>
+    <td><b>Alternative Scenario</b></td>
+    <td></td>
+    <td>8a. The system shows that the selection of the user is wrong and adds this sign to a list of signs that the user did not get right.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td>12a. The system navigates to the first sign the user got wrong. The use case continues at step 5 and repeats for all the signs the user got wrong.</td>
+  </tr>
+</tbody>
+</table>
+
 ## System context
 
 This page shows the most zoomed out view of the system.
