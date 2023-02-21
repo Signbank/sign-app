@@ -3,8 +3,9 @@ site_name: Sign app wiki
 nav:
   - Home: index.md
   - Documentation: documentation.md
-  - Installation guide: installation_guide.md
   - API documentation: api.md
+  - User interface documentation: user_interface_sketches.md
+  - Installation guide: installation_guide.md
 
 theme:
   name: 'material'
