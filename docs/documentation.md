@@ -406,6 +406,16 @@ It is designed as a separate component from the video page to allow its usage in
 0. A Slow Motion button that decreases the video speed.
 0. A Fullscreen button that enlarges the video to fullscreen.
 
+#### Quiz page
+On this page, users can view a video of a sign and has to give the meaning of that sign.
+
+![Quiz page sketch](Media/Quiz_page_sketch.png)
+
+0. A back button that returns the user to the home screen page when clicked
+0. The video player that displays the video of the sign
+0. A list of multiple choice answers that the user can select
+0. A button that check the answer given by the user
+
 ## System components
 The following diagram depicts the structure of the different systems used in the Sign app.
 Both the front-end and back-end follow the [Model-View-Controller (MVC)](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) pattern, although Django's implementation of the pattern differs slightly.
