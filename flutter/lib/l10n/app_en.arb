@@ -3,6 +3,9 @@
     "@sign_app": {
         "description": "Name of the application"
     },
+
+    "pickUpWhereYouLeftOf":"Pick up where you left of:",
+    "lists": "Lists",
     "search": "Search",
     "searchByWord": "Search by word",
     "searchByGesture": "Search by property",
