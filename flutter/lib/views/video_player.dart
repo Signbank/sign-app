@@ -50,75 +50,76 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
                 child: CircularProgressIndicator(),
               );
             }
-            return Stack(children: [
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    if (_controller.value.isPlaying) {
-                      _controller.pause();
-                    } else {
-                      _controller.play();
-                    }
-                  });
-                },
-                child: AspectRatio(
-                  aspectRatio: _controller.value.aspectRatio,
-                  child: VideoPlayer(_controller),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                child: IconButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onPressed: () {
-                    setState(() {
-                      if (_controller.value.isPlaying) {
-                        _controller.pause();
-                      } else {
-                        _controller.play();
-                      }
-                    });
-                  },
-                  icon: Icon(
-                    _controller.value.isPlaying
-                        ? Icons.pause
-                        : Icons.play_arrow,
-                  ),
-                  color: Colors.black,
-                  iconSize: 38,
-                ),
-              ),
-              Positioned(
-                bottom: 5,
-                right: 10,
-                child: DropdownButtonHideUnderline(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: DropdownButton<double>(
-                      value: _playbackSpeed,
-                      icon: const Icon(Icons.slow_motion_video),
-                      items: <double>[0.25, 0.5, 0.75, 1].map((double value) {
-                        return DropdownMenuItem<double>(
-                          value: value,
-                          child: Text('$value'),
-                        );
-                      }).toList(),
-                      onChanged: (double? value) {
+            return InkWell(
+              onTap: () {
+                setState(() {
+                  if (_controller.value.isPlaying) {
+                    _controller.pause();
+                  } else {
+                    _controller.play();
+                  }
+                });
+              },
+              child: AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                child: Stack(children: [
+                  VideoPlayer(_controller),
+                  Positioned(
+                    bottom: 0,
+                    child: IconButton(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onPressed: () {
                         setState(() {
-                          _playbackSpeed = value!;
-                          _controller.setPlaybackSpeed(_playbackSpeed);
+                          if (_controller.value.isPlaying) {
+                            _controller.pause();
+                          } else {
+                            _controller.play();
+                          }
                         });
                       },
+                      icon: Icon(
+                        _controller.value.isPlaying
+                            ? Icons.pause
+                            : Icons.play_arrow,
+                      ),
+                      color: Colors.black,
+                      iconSize: 38,
                     ),
                   ),
-                ),
+                  Positioned(
+                    bottom: 5,
+                    right: 10,
+                    child: DropdownButtonHideUnderline(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: DropdownButton<double>(
+                          value: _playbackSpeed,
+                          icon: const Icon(Icons.slow_motion_video),
+                          items: <double>[0.25, 0.5, 0.75, 1]
+                              .map((double value) {
+                            return DropdownMenuItem<double>(
+                              value: value,
+                              child: Text('$value'),
+                            );
+                          }).toList(),
+                          onChanged: (double? value) {
+                            setState(() {
+                              _playbackSpeed = value!;
+                              _controller.setPlaybackSpeed(_playbackSpeed);
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ]),
               ),
-            ]);
+            );
           }),
     );
   }
