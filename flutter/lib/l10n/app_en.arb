@@ -8,5 +8,15 @@
     "searchByGesture": "Search by property",
     "back": "Back",
     "searchFor": "Search for: ",
-    "propertyGroup": "Property: "
+    "propertyGroup": "Property: ",
+    "quizOf": "Quiz of: ",
+    "checkAnswer": "Check answer",
+    "nextSign": "Next sign",
+    "goBackHome": "Go back home",
+    "yes": "Yes",
+    "no": "No",
+    "quizCompletedTitle": "Quiz completed",
+    "quizCompletedBody":"Well done you completed the whole list!",
+    "quizRepeatWrongAnswerTitle": "Learn from your mistakes",
+    "quizRepeatWrongAnswerBody":"Looks like you made a few mistakes.\nWould you like to go over them again?"
 }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:sign_app/controllers/base_controller.dart';
 import 'package:sign_app/models/sign.dart';
@@ -9,6 +8,7 @@ class QuizController extends Controller {
   QuizController(this._callback);
 
   final Function _callback;
+  String _listName = '';
   List<Sign> _signList = List.empty();
   late List<String> _multipleChoiceOptions;
   final List<int> _wrongAnswers = List.empty(growable: true);
@@ -54,7 +54,11 @@ class QuizController extends Controller {
   }
 
   void checkAnswer() {
-    if(_isRepeatingWrongAnswers){
+    //If the user is repeating the wrong answers and gets it wrong again add it to the list again
+    if (_isRepeatingWrongAnswers) {
+      if (_multipleChoiceOptions[_chosenAnswerIndex] != _wrongAnswerName) {
+        _wrongAnswers.add(_wrongAnswers[0]);
+      }
       return;
     }
 
@@ -75,7 +79,8 @@ class QuizController extends Controller {
       return;
     }
 
-    if (_wrongAnswers.length <= 1) {
+    //Check if the user got any answers wrong
+    if (_wrongAnswers.isEmpty) {
       _showQuizDialog(context, true);
       _isRepeatingWrongAnswers = false;
       return;
@@ -92,6 +97,13 @@ class QuizController extends Controller {
 
     // User is already repeating the wrong answers so remote the first which they already covered
     _wrongAnswers.removeAt(0);
+
+    //Check if there are any wrong answers left
+    if (_wrongAnswers.isEmpty) {
+      _showQuizDialog(context, true);
+      _isRepeatingWrongAnswers = false;
+      return;
+    }
     _multipleChoiceOptions = _getMultipleChoiceOptions(_wrongAnswers[0]);
     _callback();
     return;
@@ -122,6 +134,8 @@ class QuizController extends Controller {
   String get chosenAnswer => _multipleChoiceOptions[_chosenAnswerIndex];
 
   List<String> get multipleChoiceOptions => _multipleChoiceOptions;
+
+  String get listName => _listName;
 
   get _signJson =>
       '[{"sign_name": "ACCEPTEREN-A", "video_url": "glossvideo/NGT/AC/ACCEPTEREN-A-51.mp4", "image_url": "glossimage/NGT/AC/ACCEPTEREN-A-51.png"},{"sign_name": "ACCEPTEREN-B","video_url": "glossvideo/NGT/AC/ACCEPTEREN-B-3277.mp4","image_url": "glossimage/NGT/AC/ACCEPTEREN-B-3277.png"},{"sign_name": "ACCEPTEREN-C","video_url": "glossvideo/NGT/AC/ACCEPTEREN-C-4160.mp4","image_url": "glossimage/NGT/AC/ACCEPTEREN-C-4160.png"},{"sign_name": "ACCEPTEREN-D", "video_url": "glossvideo/NGT/AC/ACCEPTEREN-A-51.mp4", "image_url": "glossimage/NGT/AC/ACCEPTEREN-A-51.png"}]';

@@ -8,11 +8,11 @@ class QuizNotificationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String title = isDone ? "Quiz completed" : "Learn from your mistakes";
+    String title = isDone ?  AppLocalizations.of(context)!.quizCompletedTitle : AppLocalizations.of(context)!.quizRepeatWrongAnswerTitle;
     String text = isDone
-        ? "Well done you completed the whole list!"
-        : "Looks like you made a few mistakes.\nWould you like to go over them?";
-    String buttonText = isDone ? "Go back home" : "Yes";
+        ? AppLocalizations.of(context)!.quizCompletedBody
+        : AppLocalizations.of(context)!.quizRepeatWrongAnswerBody;
+    String buttonText = isDone ? AppLocalizations.of(context)!.goBackHome : AppLocalizations.of(context)!.yes;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -39,7 +39,7 @@ class QuizNotificationDialog extends StatelessWidget {
               visible: !isDone,
               child: Expanded(
                 child: TextButton(
-                  child: const Text("No"),
+                  child: Text(AppLocalizations.of(context)!.no),
                   onPressed: () => Navigator.popUntil(
                       context, ModalRoute.withName(Navigator.defaultRouteName)),
                 ),

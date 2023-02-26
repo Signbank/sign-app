@@ -3,6 +3,7 @@ import 'package:sign_app/controllers/quiz_controller.dart';
 import 'package:sign_app/red_impact_color.dart';
 import 'package:sign_app/url_config.dart';
 import 'package:sign_app/views/video_player.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class QuizView extends StatefulWidget {
   const QuizView({super.key});
@@ -27,7 +28,8 @@ class _QuizViewState extends State<QuizView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Quiz list name"),
+        title:
+            Text(AppLocalizations.of(context)!.quizOf + _controller.listName),
       ),
       body: FutureBuilder<void>(
         future: _dataFuture,
@@ -56,7 +58,7 @@ class _QuizViewState extends State<QuizView> {
                           _isAnswerChecked = true;
                         });
                       },
-                      child: const Text("Check answer")),
+                      child: Text(AppLocalizations.of(context)!.checkAnswer)),
                 ),
               ),
               secondChild: Padding(
@@ -70,7 +72,7 @@ class _QuizViewState extends State<QuizView> {
                           _controller.nextSign(context);
                         });
                       },
-                      child: const Text("Next sign")),
+                      child: Text(AppLocalizations.of(context)!.nextSign)),
                 ),
               ),
             ),
@@ -103,7 +105,9 @@ class _QuizViewState extends State<QuizView> {
                     child: Text(
                   _controller.multipleChoiceOptions[index],
                   style: TextStyle(
-                      color: backgroundColor == Colors.green ? Colors.white : Colors.black),
+                      color: backgroundColor != Colors.white
+                          ? Colors.white
+                          : Colors.black),
                 )),
               ),
             );
