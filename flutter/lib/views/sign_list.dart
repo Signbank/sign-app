@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sign_app/url_config.dart';
-import 'package:sign_app/controller/sign_list_controller.dart';
-import 'package:sign_app/view/video_page.dart';
+import 'package:sign_app/controllers/sign_list_controller.dart';
+import 'package:sign_app/views/video_page.dart';
 
 class SearchSignListView extends StatefulWidget {
   const SearchSignListView(

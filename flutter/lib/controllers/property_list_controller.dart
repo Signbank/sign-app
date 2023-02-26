@@ -1,4 +1,4 @@
-import 'package:sign_app/controller/base_controller.dart';
+import 'package:sign_app/controllers/base_controller.dart';
 import 'package:sign_app/models/property.dart';
 import 'package:sign_app/url_config.dart';
 

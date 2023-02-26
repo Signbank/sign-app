@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:sign_app/controller/property_list_controller.dart';
+import 'package:sign_app/controllers/property_list_controller.dart';
 import 'package:sign_app/models/property.dart';
-import 'package:sign_app/view/sign_list.dart';
+import 'package:sign_app/views/sign_list.dart';
 
 class SearchPropertyListView extends StatefulWidget {
   const SearchPropertyListView({super.key});

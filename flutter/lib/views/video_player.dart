@@ -13,50 +13,57 @@ class VideoPlayerView extends StatefulWidget {
 }
 
 class _VideoPlayerViewState extends State<VideoPlayerView> {
-  late VideoPlayerController controller;
-  late Future<void> initializeVideoPlayerFuture;
+  late VideoPlayerController _controller;
+  late Future<void> _initializeVideoPlayerFuture;
 
-  double playbackSpeed = 1;
+  double _playbackSpeed = 1;
 
   @override
   void initState() {
     super.initState();
-    controller = VideoPlayerController.network(widget.url);
+    _controller = VideoPlayerController.network(widget.url);
 
-    initializeVideoPlayerFuture = controller.initialize();
+    _initializeVideoPlayerFuture = _controller.initialize();
 
     if (widget.startPlaying) {
-      controller.play();
+      _controller.play();
     }
-    controller.setLooping(true);
+    _controller.setLooping(true);
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: initializeVideoPlayerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height / 3.5,
+      width: double.infinity,
+      child: FutureBuilder(
+          future: _initializeVideoPlayerFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
             return Stack(children: [
               InkWell(
                 onTap: () {
                   setState(() {
-                    if (controller.value.isPlaying) {
-                      controller.pause();
+                    if (_controller.value.isPlaying) {
+                      _controller.pause();
                     } else {
-                      controller.play();
+                      _controller.play();
                     }
                   });
                 },
                 child: AspectRatio(
-                  aspectRatio: controller.value.aspectRatio,
-                  child: VideoPlayer(controller),
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
                 ),
               ),
               Positioned(
@@ -66,16 +73,19 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
                   highlightColor: Colors.transparent,
                   onPressed: () {
                     setState(() {
-                      if (controller.value.isPlaying) {
-                        controller.pause();
+                      if (_controller.value.isPlaying) {
+                        _controller.pause();
                       } else {
-                        controller.play();
+                        _controller.play();
                       }
                     });
                   },
                   icon: Icon(
-                    controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                    _controller.value.isPlaying
+                        ? Icons.pause
+                        : Icons.play_arrow,
                   ),
+                  color: Colors.black,
                   iconSize: 38,
                 ),
               ),
@@ -90,7 +100,7 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: DropdownButton<double>(
-                      value: playbackSpeed,
+                      value: _playbackSpeed,
                       icon: const Icon(Icons.slow_motion_video),
                       items: <double>[0.25, 0.5, 0.75, 1].map((double value) {
                         return DropdownMenuItem<double>(
@@ -100,8 +110,8 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
                       }).toList(),
                       onChanged: (double? value) {
                         setState(() {
-                          playbackSpeed = value!;
-                          controller.setPlaybackSpeed(playbackSpeed);
+                          _playbackSpeed = value!;
+                          _controller.setPlaybackSpeed(_playbackSpeed);
                         });
                       },
                     ),
@@ -109,26 +119,7 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
                 ),
               ),
             ]);
-          }
-
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
+          }),
+    );
   }
 }
-
-// ecoratedBox(
-// decoration: BoxDecoration(
-// color:Colors.lightGreen, //background color of dropdown button
-// border: Border.all(color: Colors.black38, width:3), //border of dropdown button
-// borderRadius: BorderRadius.circular(50), //border raiuds of dropdown button
-// boxShadow: <BoxShadow>[ //apply shadow on Dropdown button
-// BoxShadow(
-// color: Color.fromRGBO(0, 0, 0, 0.57), //shadow for button
-// blurRadius: 5) //blur radius of shadow
-// ]
-// ),
-//
-// child:Padding(
-// padding: EdgeInsets.only(left:30, right:30),

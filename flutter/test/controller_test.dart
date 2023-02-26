@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
-import 'package:sign_app/controller/property_list_controller.dart';
-import 'package:sign_app/controller/sign_list_controller.dart';
+import 'package:sign_app/controllers/property_list_controller.dart';
+import 'package:sign_app/controllers/sign_list_controller.dart';
 import 'package:http/testing.dart';
 import 'package:sign_app/models/property.dart';
 

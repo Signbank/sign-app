@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:sign_app/view/search_property_list.dart';
-import 'package:sign_app/view/sign_list.dart';
+import 'package:sign_app/views/search_property_list.dart';
+import 'package:sign_app/views/sign_list.dart';
 
 Future<void> searchDialogBuilder(BuildContext context) {
   var searchInput = '';

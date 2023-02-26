@@ -1,4 +1,4 @@
-import 'package:sign_app/controller/base_controller.dart';
+import 'package:sign_app/controllers/base_controller.dart';
 import 'package:sign_app/url_config.dart';
 import 'package:sign_app/models/sign.dart';
 
@@ -6,7 +6,7 @@ class SignListController extends Controller {
   SignListController(this._callback);
 
   List<Sign> _signList = List.empty();
-  Function _callback;
+  final Function _callback;
 
   Future<void> fetchSigns({List<int> singIds = const [], String searchTerm = ''}) async {
     const endpointUrl = '/dictionary/gloss/api/';
@@ -40,7 +40,4 @@ class SignListController extends Controller {
   String getSignName(int index) => _signList[index].name;
 
   String getSignImageUrl(int index) => _signList[index].imageUrl;
-
-  ///Setters
-  set setCallback(Function callback) => _callback = callback;
 }
