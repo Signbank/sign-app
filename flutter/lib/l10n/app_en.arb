@@ -18,6 +18,8 @@
     "goBackHome": "Go back home",
     "yes": "Yes",
     "no": "No",
+    "edit": "Edit",
+    "delete": "Delete",
     "quizCompletedTitle": "Quiz completed",
     "quizCompletedBody":"Well done you completed the whole list!",
     "quizRepeatWrongAnswerTitle": "Learn from your mistakes",

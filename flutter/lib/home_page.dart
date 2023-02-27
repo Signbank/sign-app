@@ -11,6 +11,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+enum ListMenuItems { edit, delete }
+
 class _HomePageState extends State<HomePage> {
   late HomePageController _controller;
 
@@ -52,14 +54,37 @@ class _HomePageState extends State<HomePage> {
                   return Card(
                     child: ListTile(
                       onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) => const QuizView()));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const QuizView()));
                       },
                       title: Text(_controller.listsTitle(index)),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.more_vert),
-                        onPressed: () {
-                          //TODO: Show list actions like edit or delete
+                      trailing: PopupMenuButton<ListMenuItems>(
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<ListMenuItems>>[
+                          PopupMenuItem<ListMenuItems>(
+                            value: ListMenuItems.edit,
+                            child: Text(
+                              AppLocalizations.of(context)!.edit,
+                            ),
+                          ),
+                          PopupMenuItem<ListMenuItems>(
+                            value: ListMenuItems.delete,
+                            child: Text(
+                              AppLocalizations.of(context)!.delete,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                        onSelected: (ListMenuItems item) {
+                          switch (item) {
+                            case ListMenuItems.edit:
+                              // TODO: Edit current list
+                              break;
+                            case ListMenuItems.delete:
+                              // TODO: Create pop up that asks if the user is sure
+                              _controller.deleteList(index);
+                              break;
+                          }
                         },
                       ),
                     ),
