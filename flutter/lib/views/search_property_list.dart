@@ -19,13 +19,13 @@ class _SearchPropertyListViewState extends State<SearchPropertyListView>
   //Removing and adding items to this list allows for the animation
   final List<Property> _displayProperties = List.empty(growable: true);
 
-  late PropertyListController _con;
+  late PropertyListController _controller;
 
   @override
   void initState() {
     super.initState();
 
-    _con = PropertyListController(callback);
+    _controller = PropertyListController(callback);
   }
 
   @override
@@ -63,8 +63,8 @@ class _SearchPropertyListViewState extends State<SearchPropertyListView>
   }
 
   Widget _showBody() {
-    if (_con.getPropertyList.isEmpty) {
-      _con.fetchProperties();
+    if (_controller.getPropertyList.isEmpty) {
+      _controller.fetchProperties();
       // return const Center(child: CircularProgressIndicator());
     }
 
@@ -72,7 +72,7 @@ class _SearchPropertyListViewState extends State<SearchPropertyListView>
       key: _listKey,
       itemBuilder:
           (BuildContext context, int index, Animation<double> animation) {
-        return _listItem(context, index, animation, _con.getPropertyName(index));
+        return _listItem(context, index, animation, _controller.getPropertyName(index));
       },
     );
   }
@@ -82,7 +82,7 @@ class _SearchPropertyListViewState extends State<SearchPropertyListView>
       opacity: animation,
       child: InkWell(
         onTap: () {
-          _con.addChosenProperty(index);
+          _controller.addChosenProperty(index);
         },
         child: SizedBox(
           // Actual widget to display
@@ -110,6 +110,6 @@ class _SearchPropertyListViewState extends State<SearchPropertyListView>
           );
           return;
         }
-        _refreshData(_con.getPropertyList);
+        _refreshData(_controller.getPropertyList);
       });
 }

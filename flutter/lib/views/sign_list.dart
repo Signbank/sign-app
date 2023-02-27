@@ -16,12 +16,12 @@ class SearchSignListView extends StatefulWidget {
 }
 
 class _SearchSignListViewState extends State<SearchSignListView> {
-  late SignListController _con;
+  late SignListController _controller;
 
   @override
   void initState() {
     super.initState();
-    _con = SignListController(callback);
+    _controller = SignListController(callback);
   }
 
   @override
@@ -35,27 +35,27 @@ class _SearchSignListViewState extends State<SearchSignListView> {
   }
 
   Widget _showBody() {
-    if (_con.signList.isEmpty) {
-      _con.fetchSigns(searchTerm: widget._searchTerm, singIds: widget._signIds);
+    if (_controller.signList.isEmpty) {
+      _controller.fetchSigns(searchTerm: widget._searchTerm, singIds: widget._signIds);
       return const Center(child: CircularProgressIndicator());
     }
 
     return ListView.builder(
-        itemCount: _con.signList.length,
+        itemCount: _controller.signList.length,
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
             onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => VideoPage(sign: _con.getSign(index)))),
+                builder: (context) => VideoPage(sign: _controller.getSign(index)))),
             child: Card(
               child: ListTile(
                   leading: SizedBox(
                     width: 100,
                     height: 56,
                     child: Image.network(
-                      signBankBaseMediaUrl + _con.getSignImageUrl(index),
+                      signBankBaseMediaUrl + _controller.getSignImageUrl(index),
                     ),
                   ),
-                  title: Text(_con.getSignName(index))),
+                  title: Text(_controller.getSignName(index))),
             ),
           );
         });
