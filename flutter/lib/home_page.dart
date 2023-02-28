@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sign_app/controllers/home_page_controller.dart';
+import 'package:sign_app/views/quiz_list_page.dart';
 import 'package:sign_app/views/quiz_page.dart';
 import 'package:sign_app/views/search_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'models/quiz_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -37,7 +40,8 @@ class _HomePageState extends State<HomePage> {
           ListTile(
             trailing: IconButton(
                 onPressed: () {
-                  //TODO: Add new list
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const QuizListView()));
                 },
                 icon: const Icon(Icons.add)),
             title: Text(
@@ -55,7 +59,11 @@ class _HomePageState extends State<HomePage> {
                     child: ListTile(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const QuizView()));
+                            builder: (context) => const QuizView())).then((value) => setState((){
+                              if(value.type == QuizList){
+
+                              }
+                        }));
                       },
                       title: Text(_controller.listsTitle(index)),
                       trailing: PopupMenuButton<ListMenuItems>(

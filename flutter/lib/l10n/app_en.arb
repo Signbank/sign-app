@@ -20,6 +20,7 @@
     "no": "No",
     "edit": "Edit",
     "delete": "Delete",
+    "createList": "Create a list",
     "quizCompletedTitle": "Quiz completed",
     "quizCompletedBody":"Well done you completed the whole list!",
     "quizRepeatWrongAnswerTitle": "Learn from your mistakes",

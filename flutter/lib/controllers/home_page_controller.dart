@@ -1,10 +1,11 @@
 import 'package:sign_app/controllers/base_controller.dart';
+import 'package:sign_app/models/user_quiz_list_data.dart';
 
 class HomePageController extends Controller{
  HomePageController(this._callback);
 
  final Function _callback;
- List<String> _lists = ['Country names'];
+ List<UserQuizListData> _lists = List.empty(growable: true);
 
 
   void getLastPracticedList() {
@@ -23,6 +24,6 @@ class HomePageController extends Controller{
  double get lastPracticedListProgression => 0.8;
 
  int get listsLength => _lists.length;
- String listsTitle(int index) => _lists[index];
+ String listsTitle(int index) => _lists[index].quizList.name;
 
 }
