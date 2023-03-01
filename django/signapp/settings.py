@@ -27,6 +27,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'dictionary',
+    'quiz',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
