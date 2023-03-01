@@ -13,19 +13,19 @@ class Sign(models.Model):
     image_url = models.CharField(max_length=100)
 
 
-class SignList(models.Model):
+class QuizList(models.Model):
     """
-    Model representing a list of signs from that can be used to learn those signs.
+    Model representing a list of signs which can be used to learn signs.
     """
     name = models.CharField(max_length=100)
     signs = models.ManyToManyField(Sign)
 
 
-class UserSignList(models.Model):
+class UserQuizList(models.Model):
     """
     Model representing meta data from the user of list of signs.
     """
     user = models.IntegerField(default=0)
-    sign_list = models.ForeignKey(SignList, on_delete=models.CASCADE)
+    quiz_list = models.ForeignKey(QuizList, on_delete=models.CASCADE)
     last_practiced = models.DateTimeField(null=True, blank=True)
     last_sign_index = models.IntegerField(default=0)

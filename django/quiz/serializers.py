@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UserSignList, SignList, Sign
+from .models import UserQuizList, QuizList, Sign
 
 
 class SignSerializer(serializers.ModelSerializer):
@@ -8,29 +8,29 @@ class SignSerializer(serializers.ModelSerializer):
         fields = ['name', 'video_url', 'image_url']
 
 
-class SignListSerializer(serializers.ModelSerializer):
+class QuizListSerializer(serializers.ModelSerializer):
     signs = SignSerializer(many=True)
 
     class Meta:
-        model = SignList
+        model = QuizList
         fields = ['name', 'signs']
 
 
-class UserSignListSerializer(serializers.ModelSerializer):
-    sign_list = SignListSerializer()
+class UserQuizListSerializer(serializers.ModelSerializer):
+    quiz_list = QuizListSerializer()
 
     class Meta:
-        model = UserSignList
-        fields = ['id', 'user', 'sign_list', 'last_practiced', 'last_sign_index']
+        model = UserQuizList
+        fields = ['id', 'user', 'quiz_list', 'last_practiced', 'last_sign_index']
 
     def create(self, validated_data):
-        quiz_list = validated_data.pop('sign_list')
-        signs_data = quiz_list.pop('signs')
+        quiz_list_data = validated_data.pop('quiz_list')
+        signs_data = quiz_list_data.pop('signs')
         signs = [Sign(**item) for item in signs_data]
         Sign.objects.bulk_create(signs)
 
-        sign_list = SignList.objects.create(**quiz_list)
+        sign_list = QuizList.objects.create(**quiz_list_data)
         sign_list.signs.set(signs)
 
-        user_sign_list = UserSignList.objects.create(sign_list=sign_list, **validated_data)
+        user_sign_list = UserQuizList.objects.create(quiz_list=quiz_list_data, **validated_data)
         return user_sign_list
