@@ -1,32 +1,49 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:sign_app/controllers/base_controller.dart';
 import 'package:sign_app/models/sign.dart';
+import 'package:sign_app/models/user_quiz_list_data.dart';
+import 'package:sign_app/url_config.dart';
 import 'package:sign_app/views/quiz_notification_view.dart';
 
 class QuizController extends Controller {
-  QuizController(this._callback);
+  QuizController(this._callback, this._userQuizListData);
 
   final Function _callback;
-  String _listName = '';
-  List<Sign> _signList = List.empty();
+  final UserQuizListData _userQuizListData;
+  late List<Sign> _signList;
   late List<String> _multipleChoiceOptions;
   final List<int> _wrongAnswers = List.empty(growable: true);
   bool _isRepeatingWrongAnswers = false;
   int _currentSignIndex = 0;
   int _chosenAnswerIndex = 0;
   int _numberOfMultipleChoiceOptions = 3;
+  final _endpointUrl = "/user-quiz-lists/";
 
   Future<void> fetchQuiz() async {
-    _signList = Sign.listFromJson(jsonDecode(_signJson));
+    int lastSeenSignIndex = _userQuizListData.lastPracticedIndex;
+    if(lastSeenSignIndex >= _userQuizListData.quizList.signs.length){
+      lastSeenSignIndex = 0;
+    }
+    _signList = _userQuizListData.quizList.signs.sublist(lastSeenSignIndex);
+    // _signList.shuffle();
 
     _multipleChoiceOptions = _getMultipleChoiceOptions(_currentSignIndex);
 
     _callback();
   }
 
+  void updateQuizData() {
+    _userQuizListData.lastPracticedIndex += _currentSignIndex;
+    _userQuizListData.lastPracticedDate = DateTime.now();
+
+    super.putRequest(
+        url: "$signAppBaseUrl$_endpointUrl${_userQuizListData.id}/",
+        body: _userQuizListData,
+        fromJsonFunction: UserQuizListData.fromJson);
+  }
+
   List<String> _getMultipleChoiceOptions(int index) {
-    List<Sign> tempSignList = List.from(_signList);
+    List<Sign> tempSignList = List.from(_userQuizListData.quizList.signs);
     List<String> multipleChoiceOptions = [];
 
     //Add name of the current sign which is the correct answer
@@ -135,11 +152,9 @@ class QuizController extends Controller {
 
   List<String> get multipleChoiceOptions => _multipleChoiceOptions;
 
-  String get listName => _listName;
-
-  get _signJson =>
-      '[{"sign_name": "ACCEPTEREN-A", "video_url": "glossvideo/NGT/AC/ACCEPTEREN-A-51.mp4", "image_url": "glossimage/NGT/AC/ACCEPTEREN-A-51.png"},{"sign_name": "ACCEPTEREN-B","video_url": "glossvideo/NGT/AC/ACCEPTEREN-B-3277.mp4","image_url": "glossimage/NGT/AC/ACCEPTEREN-B-3277.png"},{"sign_name": "ACCEPTEREN-C","video_url": "glossvideo/NGT/AC/ACCEPTEREN-C-4160.mp4","image_url": "glossimage/NGT/AC/ACCEPTEREN-C-4160.png"},{"sign_name": "ACCEPTEREN-D", "video_url": "glossvideo/NGT/AC/ACCEPTEREN-A-51.mp4", "image_url": "glossimage/NGT/AC/ACCEPTEREN-A-51.png"}]';
+  String get listName => _userQuizListData.quizList.name;
 
   ///Setters
   set setChosenAnswerIndex(int index) => _chosenAnswerIndex = index;
+
 }

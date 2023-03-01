@@ -3,8 +3,8 @@ import 'package:sign_app/models/quiz_list.dart';
 class UserQuizListData{
   final int id;
   final int userId;
-  final DateTime lastPracticedDate;
-  final int lastPracticedIndex;
+  late DateTime lastPracticedDate;
+  late int lastPracticedIndex;
   final QuizList quizList;
 
   UserQuizListData({required this.id, required this.userId, required this.lastPracticedDate, required this.lastPracticedIndex, required this.quizList});

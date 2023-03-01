@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:sign_app/controllers/quiz_controller.dart';
+import 'package:sign_app/models/user_quiz_list_data.dart';
 import 'package:sign_app/red_impact_color.dart';
 import 'package:sign_app/url_config.dart';
 import 'package:sign_app/views/video_player.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class QuizView extends StatefulWidget {
-  const QuizView({super.key});
+  const QuizView({super.key, required this.userQuizListData});
+
+  final UserQuizListData userQuizListData;
 
   @override
   State<StatefulWidget> createState() => _QuizViewState();
@@ -20,8 +23,14 @@ class _QuizViewState extends State<QuizView> {
   @override
   void initState() {
     super.initState();
-    _controller = QuizController(callback);
+    _controller = QuizController(callback, widget.userQuizListData);
     _dataFuture = _controller.fetchQuiz();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.updateQuizData();
   }
 
   @override
