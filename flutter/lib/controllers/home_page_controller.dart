@@ -22,7 +22,17 @@ class HomePageController extends Controller {
 
     if (returnData != null) {
       _lists = returnData;
+      _setMostRecentQuiz();
       _callback();
+    }
+  }
+
+  void _setMostRecentQuiz(){
+    _mostRecentQuiz = _lists.first;
+    for (var element in _lists) {
+      if(element.lastPracticedDate.isBefore(_mostRecentQuiz.lastPracticedDate)){
+        _mostRecentQuiz = element;
+      }
     }
   }
 
@@ -34,8 +44,8 @@ class HomePageController extends Controller {
   }
 
   ///Getters
-  String get lastPracticedListName => "Country names";
-  double get lastPracticedListProgression => 0.8;
+  String get lastPracticedListName => _mostRecentQuiz.quizList.name;
+  double get lastPracticedListProgression => (_mostRecentQuiz.lastPracticedIndex/_mostRecentQuiz.quizList.signs.length);
   int get listsLength => _lists.length;
   String listsTitle(int index) => _lists[index].quizList.name;
   UserQuizListData getUserQuizListData(int index) {
