@@ -23,4 +23,9 @@ class Sign{
         .toList()
         .cast<Sign>();
   }
+  Map<String, dynamic> toJson() => {
+    'sign_name': name,
+    'video_url': videoUrl,
+    'image_url': imageUrl,
+  };
 }

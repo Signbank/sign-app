@@ -2,10 +2,10 @@ import 'package:sign_app/models/sign.dart';
 
 class QuizList {
   final int id;
-  final String name;
-  final List<Sign> signs;
+  late String name;
+  late List<Sign> signs;
 
-  const QuizList({
+  QuizList({
     required this.id,
     required this.name,
     required this.signs,
@@ -18,4 +18,9 @@ class QuizList {
       signs: Sign.listFromJson(json['signs']),
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'signs': List.from(signs.map((sign) => sign.toJson())),
+  };
 }

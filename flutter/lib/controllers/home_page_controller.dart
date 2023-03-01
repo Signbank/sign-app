@@ -1,21 +1,32 @@
 import 'package:sign_app/controllers/base_controller.dart';
 import 'package:sign_app/models/user_quiz_list_data.dart';
+import 'package:sign_app/url_config.dart';
 
 class HomePageController extends Controller{
  HomePageController(this._callback);
 
  final Function _callback;
  List<UserQuizListData> _lists = List.empty(growable: true);
-
+ final _endpointUrl = "/user-quiz-lists/";
 
   void getLastPracticedList() {
    _callback();
   }
 
-  void fetchListData() {}
+  Future<void> fetchListData() async {
+   var returnData = await super.getRequest(
+       url: "$signAppBaseUrl/user-quiz-lists/",
+       fromJsonFunction: UserQuizListData.listFromJson);
+
+   if(returnData != null){
+    _lists = returnData;
+    _callback();
+   }
+  }
 
  void deleteList(int index) {
-   _lists.removeAt(index);
+  super.deleteRequest(url: "$signAppBaseUrl$_endpointUrl${_lists[index].id}/");
+  _lists.removeAt(index);
    _callback();
  }
 
@@ -25,5 +36,11 @@ class HomePageController extends Controller{
 
  int get listsLength => _lists.length;
  String listsTitle(int index) => _lists[index].quizList.name;
+
+ ///Setters
+  void addList(UserQuizListData dataList) {
+   _lists.add(dataList);
+   _callback();
+  }
 
 }

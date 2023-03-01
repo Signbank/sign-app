@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sign_app/controllers/home_page_controller.dart';
+import 'package:sign_app/models/user_quiz_list_data.dart';
 import 'package:sign_app/views/quiz_list_page.dart';
 import 'package:sign_app/views/quiz_page.dart';
 import 'package:sign_app/views/search_dialog.dart';
@@ -39,9 +40,12 @@ class _HomePageState extends State<HomePage> {
           _lastPracticedList(),
           ListTile(
             trailing: IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const QuizListView()));
+                onPressed: () async {
+                  UserQuizListData userListData = await Navigator.of(context)
+                      .push(MaterialPageRoute(
+                          builder: (context) => const QuizListView()));
+
+                  _controller.addList(userListData);
                 },
                 icon: const Icon(Icons.add)),
             title: Text(
@@ -59,11 +63,7 @@ class _HomePageState extends State<HomePage> {
                     child: ListTile(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const QuizView())).then((value) => setState((){
-                              if(value.type == QuizList){
-
-                              }
-                        }));
+                            builder: (context) => const QuizView()));
                       },
                       title: Text(_controller.listsTitle(index)),
                       trailing: PopupMenuButton<ListMenuItems>(
@@ -89,7 +89,6 @@ class _HomePageState extends State<HomePage> {
                               // TODO: Edit current list
                               break;
                             case ListMenuItems.delete:
-                              // TODO: Create pop up that asks if the user is sure
                               _controller.deleteList(index);
                               break;
                           }

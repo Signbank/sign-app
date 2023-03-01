@@ -6,10 +6,11 @@ import 'package:sign_app/views/video_page.dart';
 
 class SearchSignListView extends StatefulWidget {
   const SearchSignListView(
-      {super.key, String searchTerm = '', List<int> signIds = const []}) : _signIds = signIds, _searchTerm = searchTerm;
+      {super.key, String searchTerm = '', List<int> signIds = const [], this.isAddingSign}) : _signIds = signIds, _searchTerm = searchTerm;
 
   final String _searchTerm;
   final List<int> _signIds;
+  final isAddingSign;
 
   @override
   State createState() => _SearchSignListViewState();
@@ -45,7 +46,7 @@ class _SearchSignListViewState extends State<SearchSignListView> {
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
             onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => VideoPage(sign: _controller.getSign(index)))),
+                builder: (context) => VideoPage(sign: _controller.getSign(index), isAddingSign: widget.isAddingSign,))),
             child: Card(
               child: ListTile(
                   leading: SizedBox(

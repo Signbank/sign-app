@@ -3,9 +3,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sign_app/views/search_property_list.dart';
 import 'package:sign_app/views/sign_list.dart';
 
-Future<void> searchDialogBuilder(BuildContext context) {
+Future<dynamic> searchDialogBuilder(BuildContext context, {var isAddingSign}) {
   var searchInput = '';
-  return showDialog<void>(
+  return showDialog<dynamic>(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
@@ -53,7 +53,7 @@ Future<void> searchDialogBuilder(BuildContext context) {
               Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => SearchSignListView(searchTerm: searchInput)),
+                    builder: (context) => SearchSignListView(searchTerm: searchInput, isAddingSign: isAddingSign,)),
               );
             },
           ),

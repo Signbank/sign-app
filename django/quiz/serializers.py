@@ -5,7 +5,7 @@ from .models import UserQuizList, QuizList, Sign
 class SignSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sign
-        fields = ['name', 'video_url', 'image_url']
+        fields = ['sign_name', 'video_url', 'image_url']
 
 
 class QuizListSerializer(serializers.ModelSerializer):
@@ -13,7 +13,7 @@ class QuizListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuizList
-        fields = ['name', 'signs']
+        fields = ['id', 'name', 'signs']
 
 
 class UserQuizListSerializer(serializers.ModelSerializer):
@@ -29,8 +29,8 @@ class UserQuizListSerializer(serializers.ModelSerializer):
         signs = [Sign(**item) for item in signs_data]
         Sign.objects.bulk_create(signs)
 
-        sign_list = QuizList.objects.create(**quiz_list_data)
-        sign_list.signs.set(signs)
+        quiz_list = QuizList.objects.create(**quiz_list_data)
+        quiz_list.signs.set(signs)
 
-        user_sign_list = UserQuizList.objects.create(quiz_list=quiz_list_data, **validated_data)
+        user_sign_list = UserQuizList.objects.create(quiz_list=quiz_list, **validated_data)
         return user_sign_list

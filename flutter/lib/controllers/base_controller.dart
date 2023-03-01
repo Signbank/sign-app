@@ -31,17 +31,30 @@ abstract class Controller {
         fromJsonFunction: fromJsonFunction);
   }
 
-  T? _parseResponse<T>(
-      {required Response response, required Function fromJsonFunction}) {
+ @protected
+ Future<T?> deleteRequest<T>(
+     {required String url}) async {
+   return _parseResponse<T>(
+       response: await client.delete(
+         Uri.parse(url),
+       ));
+ }
+
+ T? _parseResponse<T>(
+      {required Response response, Function? fromJsonFunction}) {
     try {
       if (response.statusCode != 200) {
         throw Exception(
             'Failed to load data. Error code: ${response.statusCode}');
       }
+      if(fromJsonFunction == null){
+        return null;
+      }
 
       return fromJsonFunction(jsonDecode(response.body));
     } catch (e) {
       //TODO: implement user friendly error handling
+      print(e);
     }
 
     return null;

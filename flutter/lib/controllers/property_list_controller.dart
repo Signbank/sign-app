@@ -20,7 +20,7 @@ class PropertyListController extends Controller {
       return;
     }
 
-    if (returnData.isEmpty) {
+    if (returnData.length <=1) {
       var lastChosenProperty = _properties[_chosenProperties.last];
       _callback(lastChosenProperty.signIDs);
       return;

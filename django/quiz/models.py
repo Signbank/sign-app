@@ -8,7 +8,7 @@ class Sign(models.Model):
     NOTE: should be replaced by a list of sign ids
 
     """
-    name = models.CharField(max_length=100)
+    sign_name = models.CharField(max_length=100)
     video_url = models.CharField(max_length=100)
     image_url = models.CharField(max_length=100)
 
