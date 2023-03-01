@@ -32,6 +32,23 @@ abstract class Controller {
   }
 
  @protected
+ Future<T?> putRequest<T>(
+     {required String url,
+       required dynamic body,
+       required Function fromJsonFunction,
+       Map<String, String> headers = const {
+         "Content-Type": "application/json"
+       }}) async {
+   return _parseResponse<T>(
+       response: await client.put(
+         Uri.parse(url),
+         headers: headers,
+         body: jsonEncode(body),
+       ),
+       fromJsonFunction: fromJsonFunction);
+ }
+
+ @protected
  Future<T?> deleteRequest<T>(
      {required String url}) async {
    return _parseResponse<T>(

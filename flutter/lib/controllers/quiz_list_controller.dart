@@ -5,48 +5,58 @@ import 'package:sign_app/models/user_quiz_list_data.dart';
 import 'package:sign_app/url_config.dart';
 
 class QuizListController extends Controller {
-  QuizListController(this._callback, {QuizList? quizList})
-      : _quizList = quizList ?? QuizList(id: 0, name: '', signs: []);
+  QuizListController(this._callback, this._isEditing,
+      {UserQuizListData? userQuizListData})
+      : _userQuizListData = userQuizListData ?? UserQuizListData(
+      id: 0,
+      userId: 1,
+      lastPracticedDate: DateTime.now(),
+      lastPracticedIndex: 0,
+      quizList: QuizList(id: 0, name: '', signs: []));
 
-  final QuizList _quizList;
+  final UserQuizListData _userQuizListData;
   final Function _callback;
+  final bool _isEditing;
+  final _endpointUrl = "/user-quiz-lists/";
 
   UserQuizListData saveList() {
     //TODO: add correct user id
-    var userListData = UserQuizListData(
-        id: 0,
-        userId: 1,
-        lastPracticedDate: DateTime.now(),
-        lastPracticedIndex: 0,
-        quizList: _quizList);
+    if (_isEditing) {
+      super.putRequest(
+          url: "$signAppBaseUrl$_endpointUrl${_userQuizListData.id}/",
+          body: _userQuizListData,
+          fromJsonFunction: UserQuizListData.fromJson);
+    } else {
+      super.postRequest(
+          url: signAppBaseUrl + _endpointUrl,
+          body: _userQuizListData,
+          fromJsonFunction: UserQuizListData.fromJson);
+    }
 
-    super.postRequest(
-        url: "$signAppBaseUrl/user-quiz-lists/",
-        body: userListData,
-        fromJsonFunction: UserQuizListData.fromJson);
-
-    return userListData;
+    return _userQuizListData;
   }
 
   ///Getters
-  int get listsLength => _quizList.signs.length;
+  int get listsLength => _userQuizListData.quizList.signs.length;
 
-  QuizList get quizList => _quizList;
+  String get quizListName => _userQuizListData.quizList.name;
+
+  QuizList get quizList => _userQuizListData.quizList;
 
   String listsTitle(int index) {
-    return _quizList.signs[index].name;
+    return _userQuizListData.quizList.signs[index].name;
   }
 
   ///Setters
   void addSign(Sign sign) {
-    _quizList.signs.add(sign);
+    _userQuizListData.quizList.signs.add(sign);
     _callback();
   }
 
   void removeSign(int index) {
-    _quizList.signs.removeAt(index);
+    _userQuizListData.quizList.signs.removeAt(index);
     _callback();
   }
 
-  set setQuizListName(String name) => _quizList.name = name;
+  set setQuizListName(String name) => _userQuizListData.quizList.name = name;
 }

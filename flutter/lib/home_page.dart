@@ -6,8 +6,6 @@ import 'package:sign_app/views/quiz_page.dart';
 import 'package:sign_app/views/search_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'models/quiz_list.dart';
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -86,7 +84,9 @@ class _HomePageState extends State<HomePage> {
                         onSelected: (ListMenuItems item) {
                           switch (item) {
                             case ListMenuItems.edit:
-                              // TODO: Edit current list
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                  builder: (context) => QuizListView(quizList: _controller.getUserQuizListData(index), isEditing: true,)));
                               break;
                             case ListMenuItems.delete:
                               _controller.deleteList(index);

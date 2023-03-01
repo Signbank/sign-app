@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sign_app/controllers/quiz_list_controller.dart';
+import 'package:sign_app/models/quiz_list.dart';
+import 'package:sign_app/models/user_quiz_list_data.dart';
 import 'package:sign_app/views/search_dialog.dart';
 
 class QuizListView extends StatefulWidget {
-  const QuizListView({super.key});
+  const QuizListView({super.key, this.quizList, this.isEditing = false});
+
+  final UserQuizListData? quizList;
+  final bool isEditing;
 
   @override
   State createState() => _QuizListViewState();
 }
 
 class _QuizListViewState extends State<QuizListView> {
-  final bool _isEditing = false;
   late QuizListController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = QuizListController(callback);
+    _controller = QuizListController(callback, widget.isEditing, userQuizListData: widget.quizList);
   }
 
   @override
@@ -31,8 +35,8 @@ class _QuizListViewState extends State<QuizListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing
-            ? AppLocalizations.of(context)!.edit
+        title: Text(widget.isEditing
+            ? "${AppLocalizations.of(context)!.edit}: ${_controller.quizListName}"
             : AppLocalizations.of(context)!.createQuiz),
         actions: [
           IconButton(
@@ -48,7 +52,8 @@ class _QuizListViewState extends State<QuizListView> {
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
-            child: TextField(
+            child: TextFormField(
+              initialValue: _controller.quizListName,
               onChanged: (value) {
                 _controller.setQuizListName = value;
               },
