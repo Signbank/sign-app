@@ -32,5 +32,28 @@ class UserQuizListSerializer(serializers.ModelSerializer):
         quiz_list = QuizList.objects.create(**quiz_list_data)
         quiz_list.signs.set(signs)
 
-        user_sign_list = UserQuizList.objects.create(quiz_list=quiz_list, **validated_data)
-        return user_sign_list
+        user_quiz_list = UserQuizList.objects.create(quiz_list=quiz_list, **validated_data)
+        return user_quiz_list
+
+    def update(self, instance, validated_data):
+        quiz_list_data = validated_data.pop('quiz_list')
+        signs_data = quiz_list_data.pop('signs')
+        # signs = []
+        # for item in signs_data:
+        #     print(item)
+        #     sign_name = item.get('sign_name')
+        #     print(sign_name)
+
+        signs = [Sign.objects.get(sign_name=item.get('sign_name')) for item in signs_data]
+        print(signs)
+        Sign.objects.bulk_update(signs, ['sign_name', 'video_url', 'image_url'])
+
+        quiz_list = QuizList.objects.get(name=quiz_list_data.get('name'))
+        quiz_list.signs.set(signs)
+        instance.quiz_list = quiz_list
+
+        instance.user = validated_data.get('user', instance.user)
+        instance.last_practiced = validated_data.get('last_practiced', instance.last_practiced)
+        instance.last_sign_index = validated_data.get('last_sign_index', instance.last_sign_index)
+        instance.save()
+        return instance
