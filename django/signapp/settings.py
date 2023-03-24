@@ -5,6 +5,7 @@ The SECRET_KEY is stored in a .env file in the same folder as this file
 import os
 
 from pathlib import Path
+from datetime import timedelta
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -28,7 +29,9 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'dictionary',
     'quiz',
+    'accounts',
     'rest_framework',
+    'knox',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,6 +49,17 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'knox.auth.TokenAuthentication',
+    ]
+}
+
+REST_KNOX = {
+  'TOKEN_TTL': timedelta(hours=72),
+  'AUTO_REFRESH': True,
+}
 
 ROOT_URLCONF = 'signapp.urls'
 
