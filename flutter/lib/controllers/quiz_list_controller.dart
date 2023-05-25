@@ -1,5 +1,4 @@
 import 'package:sign_app/controllers/base_controller.dart';
-import 'package:sign_app/models/quiz_list.dart';
 import 'package:sign_app/models/sign.dart';
 import 'package:sign_app/models/user_quiz_list_data.dart';
 import 'package:sign_app/url_config.dart';
@@ -12,9 +11,11 @@ class QuizListController extends Controller {
       userId: 1,
       lastPracticedDate: DateTime.now(),
       lastPracticedIndex: 0,
-      quizList: QuizList(id: 0, name: '', signs: []));
+      name: '',
+      signIDs: []);
 
   final UserQuizListData _userQuizListData;
+  late List<Sign> _signs;
   final Function _callback;
   final bool _isEditing;
   final _endpointUrl = "/user-quiz-lists/";
@@ -37,26 +38,24 @@ class QuizListController extends Controller {
   }
 
   ///Getters
-  int get listsLength => _userQuizListData.quizList.signs.length;
+  int get listsLength => _userQuizListData.signIDs.length;
 
-  String get quizListName => _userQuizListData.quizList.name;
-
-  QuizList get quizList => _userQuizListData.quizList;
+  String get quizListName => _userQuizListData.name;
 
   String listsTitle(int index) {
-    return _userQuizListData.quizList.signs[index].name;
+    return _signs[index].name;
   }
 
   ///Setters
   void addSign(Sign sign) {
-    _userQuizListData.quizList.signs.add(sign);
+    _userQuizListData.signIDs.add(sign.id);
     _callback();
   }
 
   void removeSign(int index) {
-    _userQuizListData.quizList.signs.removeAt(index);
+    _signs.removeAt(index);
     _callback();
   }
 
-  set setQuizListName(String name) => _userQuizListData.quizList.name = name;
+  set setQuizListName(String name) => _userQuizListData.name = name;
 }

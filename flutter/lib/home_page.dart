@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sign_app/controllers/home_page_controller.dart';
 import 'package:sign_app/models/user_quiz_list_data.dart';
+import 'package:sign_app/views/login.dart';
 import 'package:sign_app/views/quiz_list_page.dart';
 import 'package:sign_app/views/quiz_page.dart';
 import 'package:sign_app/views/search_dialog.dart';
@@ -32,6 +33,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.sign_app),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => const LoginPage()));
+              },
+              icon: const Icon(Icons.person)),
+        ],
       ),
       body: FutureBuilder(
         future: _dataFuture,
@@ -49,11 +58,13 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 trailing: IconButton(
                     onPressed: () async {
-                      UserQuizListData userListData =
+                      UserQuizListData? userListData =
                           await Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => const QuizListView()));
 
-                      _controller.addList(userListData);
+                      if (userListData != null) {
+                        _controller.addList(userListData);
+                      }
                     },
                     icon: const Icon(Icons.add)),
                 title: Text(
@@ -130,6 +141,24 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _lastPracticedList() {
+    if (_controller.lastPracticedListData.id == 0) {
+      return Column(
+        children: [
+          ElevatedButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => const LoginPage()));
+              },
+              child: const Text("Login")),
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              _controller.fetchListData();
+            },
+          ),
+        ],
+      );
+    }
     return InkWell(
       onTap: () {
         Navigator.of(context)

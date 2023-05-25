@@ -2,16 +2,36 @@ import 'package:flutter/cupertino.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:sign_app/error_handling.dart';
+import 'package:sign_app/token_helper.dart';
 
 abstract class Controller {
- Client client = Client();
+  late Client client = Client();
+  final String _authHeaderKey = "Authorization";
+  late Map<String, String> headers = {
+    _authHeaderKey: "",
+    "Content-Type": "application/json",
+  };
+
 
   @protected
   Future<T?> getRequest<T>(
-      {required String url, required Function fromJsonFunction}) async {
-    return _parseResponse<T>(
-        response: await client.get(Uri.parse(url)),
-        fromJsonFunction: fromJsonFunction);
+      {required String url,
+      required Function fromJsonFunction,
+      requiresCredentials = false}) async {
+    try {
+      if (headers[_authHeaderKey]!.isEmpty && requiresCredentials) {
+        var token = await TokenHelper().getToken();
+        headers[_authHeaderKey] = token;
+      }
+
+      return _parseResponse<T>(
+          response: await client.get(Uri.parse(url), headers: headers),
+          fromJsonFunction: fromJsonFunction);
+    } catch (e) {
+      ErrorHandling().showError(e.toString(), ErrorLevel.error);
+    }
+    return null;
   }
 
   @protected
@@ -19,59 +39,94 @@ abstract class Controller {
       {required String url,
       required dynamic body,
       required Function fromJsonFunction,
-      Map<String, String> headers = const {
-        "Content-Type": "application/json"
-      }}) async {
-    return _parseResponse<T>(
-        response: await client.post(
-          Uri.parse(url),
-          headers: headers,
-          body: jsonEncode(body),
-        ),
-        fromJsonFunction: fromJsonFunction);
+      requiresCredentials = false}) async {
+    try {
+      if (headers[_authHeaderKey]!.isEmpty && requiresCredentials) {
+        var token = await TokenHelper().getToken();
+        headers[_authHeaderKey] = token;
+      }
+
+      return _parseResponse<T>(
+          response: await client.post(
+            Uri.parse(url),
+            headers: headers,
+            body: jsonEncode(body),
+          ),
+          fromJsonFunction: fromJsonFunction);
+    } catch (e) {
+      ErrorHandling().showError(e.toString(), ErrorLevel.error);
+    }
+    return null;
   }
 
- @protected
- Future<T?> putRequest<T>(
-     {required String url,
-       required dynamic body,
-       required Function fromJsonFunction,
-       Map<String, String> headers = const {
-         "Content-Type": "application/json"
-       }}) async {
-   return _parseResponse<T>(
-       response: await client.put(
-         Uri.parse(url),
-         headers: headers,
-         body: jsonEncode(body),
-       ),
-       fromJsonFunction: fromJsonFunction);
- }
+  @protected
+  Future<T?> putRequest<T>(
+      {required String url,
+      required dynamic body,
+      required Function fromJsonFunction}) async {
+    try {
+      if (headers[_authHeaderKey]!.isEmpty) {
+        var token = await TokenHelper().getToken();
+        headers[_authHeaderKey] = token;
+      }
+      return _parseResponse<T>(
+          response: await client.put(
+            Uri.parse(url),
+            headers: headers,
+            body: jsonEncode(body),
+          ),
+          fromJsonFunction: fromJsonFunction);
+    } catch (e) {
+      ErrorHandling().showError(e.toString(), ErrorLevel.error);
+    }
+    return null;
+  }
 
- @protected
- Future<T?> deleteRequest<T>(
-     {required String url}) async {
-   return _parseResponse<T>(
-       response: await client.delete(
-         Uri.parse(url),
-       ));
- }
+  @protected
+  Future<T?> deleteRequest<T>({required String url}) async {
+    try {
+      if (headers[_authHeaderKey]!.isEmpty) {
+        var token = await TokenHelper().getToken();
+        headers[_authHeaderKey] = token;
+      }
+      return _parseResponse<T>(
+          response: await client.delete(
+        headers: headers,
+        Uri.parse(url),
+      ));
+    } catch (e) {
+      ErrorHandling().showError(e.toString(), ErrorLevel.error);
+    }
+    return null;
+  }
 
- T? _parseResponse<T>(
+  T? _parseResponse<T>(
       {required Response response, Function? fromJsonFunction}) {
     try {
-      if (response.statusCode != 200) {
-        throw Exception(
-            'Failed to load data. Error code: ${response.statusCode}');
-      }
-      if(fromJsonFunction == null){
-        return null;
+      if (response.statusCode < 300) {
+        if (fromJsonFunction == null) {
+          return null;
+        }
+
+        return fromJsonFunction(jsonDecode(response.body));
       }
 
-      return fromJsonFunction(jsonDecode(response.body));
+      if (response.statusCode >= 300) {
+        switch (response.statusCode) {
+          case 401:
+            headers[_authHeaderKey] = "";
+            continue base;
+          base:
+          default:
+            var errorMessage = jsonDecode(response.body).values.first;
+            throw Exception("$errorMessage");
+        }
+      }
+
+      throw Exception(
+          'Failed to load data. Error code: ${response.statusCode}');
     } catch (e) {
-      //TODO: implement user friendly error handling
-      print(e);
+      ErrorHandling().showError(e.toString(), ErrorLevel.error);
     }
 
     return null;

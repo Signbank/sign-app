@@ -21,10 +21,22 @@ class QuizController extends Controller {
 
   Future<void> fetchQuiz() async {
     int lastSeenSignIndex = _userQuizListData.lastPracticedIndex;
-    if(lastSeenSignIndex >= _userQuizListData.quizList.signs.length){
+    if (lastSeenSignIndex >= _userQuizListData.signIDs.length) {
       lastSeenSignIndex = 0;
     }
-    _signList = _userQuizListData.quizList.signs.sublist(lastSeenSignIndex);
+
+    const endpointUrl = '/dictionary/gloss/api/';
+    late List<Sign>? signData;
+      signData = await super.postRequest(
+          url: signBankBaseUrl + endpointUrl,
+          fromJsonFunction: Sign.listFromJson,
+          body: _userQuizListData.signIDs);
+
+    if (signData != null) {
+      _signList = signData;
+    }
+
+    _signList = _signList.sublist(lastSeenSignIndex);
     // _signList.shuffle();
 
     _multipleChoiceOptions = _getMultipleChoiceOptions(_currentSignIndex);
@@ -43,7 +55,7 @@ class QuizController extends Controller {
   }
 
   List<String> _getMultipleChoiceOptions(int index) {
-    List<Sign> tempSignList = List.from(_userQuizListData.quizList.signs);
+    List<Sign> tempSignList = List.from(_signList);
     List<String> multipleChoiceOptions = [];
 
     //Add name of the current sign which is the correct answer
@@ -152,9 +164,8 @@ class QuizController extends Controller {
 
   List<String> get multipleChoiceOptions => _multipleChoiceOptions;
 
-  String get listName => _userQuizListData.quizList.name;
+  String get listName => _userQuizListData.name;
 
   ///Setters
   set setChosenAnswerIndex(int index) => _chosenAnswerIndex = index;
-
 }

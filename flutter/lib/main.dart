@@ -12,6 +12,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  static final GlobalKey<ScaffoldMessengerState> scaffoldKey = GlobalKey<ScaffoldMessengerState>();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         Locale('en', ''), // English, no country code
         Locale('nl', ''), // Dutch, no country code
       ],
+      scaffoldMessengerKey: scaffoldKey,
       home: const HomePage(),
     );
   }

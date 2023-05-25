@@ -25,5 +25,20 @@
     "quizCompletedTitle": "Quiz completed",
     "quizCompletedBody":"Well done you completed the whole list!",
     "quizRepeatWrongAnswerTitle": "Learn from your mistakes",
-    "quizRepeatWrongAnswerBody":"Looks like you made a few mistakes.\nWould you like to go over them again?"
+    "quizRepeatWrongAnswerBody":"Looks like you made a few mistakes.\nWould you like to go over them again?",
+    "email":"Email",
+    "username":"Username",
+    "password":"Password",
+    "repeatPassword":"Repeat password",
+    "login": "Login",
+    "register": "Register",
+    "createAnAccount": "Create an account",
+    "emptyEmail": "Please enter an email",
+    "emptyUsername": "Please enter an username",
+    "emptyPassword": "Please enter a password",
+    "emptyRepeatPassword": "Please repeat your password",
+    "invalidEmail": "Please enter a valid email address",
+    "invalidPassword": "Password must be at least 6 characters long",
+    "passwordDoNotMatch": "The passwords do not match"
+
 }

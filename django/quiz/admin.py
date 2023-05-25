@@ -1,6 +1,4 @@
 from django.contrib import admin
-from .models import UserQuizList, QuizList, Sign
+from .models import UserQuizList
 
 admin.site.register(UserQuizList)
-admin.site.register(QuizList)
-admin.site.register(Sign)

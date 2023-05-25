@@ -8,8 +8,13 @@ class HomePageController extends Controller {
   final Function _callback;
   List<UserQuizListData> _lists = List.empty(growable: true);
   final _endpointUrl = "/user-quiz-lists/";
-  late UserQuizListData _mostRecentQuiz;
-
+  late UserQuizListData _mostRecentQuiz = UserQuizListData(
+      id: 0,
+      userId: 0,
+      name: '',
+      signIDs: [],
+      lastPracticedDate: DateTime.now(),
+      lastPracticedIndex: 0);
 
   void getLastPracticedList() {
     _callback();
@@ -18,7 +23,8 @@ class HomePageController extends Controller {
   Future<void> fetchListData() async {
     var returnData = await super.getRequest(
         url: signAppBaseUrl + _endpointUrl,
-        fromJsonFunction: UserQuizListData.listFromJson);
+        fromJsonFunction: UserQuizListData.listFromJson,
+        requiresCredentials: true);
 
     if (returnData != null) {
       _lists = returnData;
@@ -27,10 +33,11 @@ class HomePageController extends Controller {
     }
   }
 
-  void setMostRecentQuiz(){
+  void setMostRecentQuiz() {
     _mostRecentQuiz = _lists.first;
     for (var element in _lists) {
-      if(element.lastPracticedDate.isBefore(_mostRecentQuiz.lastPracticedDate)){
+      if (element.lastPracticedDate
+          .isBefore(_mostRecentQuiz.lastPracticedDate)) {
         _mostRecentQuiz = element;
       }
     }
@@ -44,11 +51,17 @@ class HomePageController extends Controller {
   }
 
   ///Getters
-  String get lastPracticedListName => _mostRecentQuiz.quizList.name;
-  double get lastPracticedListProgression => (_mostRecentQuiz.lastPracticedIndex/_mostRecentQuiz.quizList.signs.length);
+  String get lastPracticedListName => _mostRecentQuiz.name;
+
+  double get lastPracticedListProgression =>
+      (_mostRecentQuiz.lastPracticedIndex / _mostRecentQuiz.signIDs.length);
+
   UserQuizListData get lastPracticedListData => _mostRecentQuiz;
+
   int get listsLength => _lists.length;
-  String listsTitle(int index) => _lists[index].quizList.name;
+
+  String listsTitle(int index) => _lists[index].name;
+
   UserQuizListData getUserQuizListData(int index) {
     return _lists[index];
   }
@@ -58,5 +71,4 @@ class HomePageController extends Controller {
     _lists.add(dataList);
     _callback();
   }
-
 }
