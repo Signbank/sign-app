@@ -6,7 +6,7 @@ enum ErrorLevel { success, warning, error }
 class ErrorHandling {
   void showError(String errorMessage, ErrorLevel errorLevel) {
     var snackBar = SnackBar(
-      content: Center(child: Text(errorMessage, style: const TextStyle(fontWeight: FontWeight.bold),)),
+      content: Text(errorMessage, style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
       backgroundColor: _showErrorColor(errorLevel),
       behavior: SnackBarBehavior.floating,
     );
