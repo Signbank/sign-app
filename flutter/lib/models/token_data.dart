@@ -1,7 +1,7 @@
 class TokenData{
 
   final String token;
-  final String expiry;
+  final dynamic expiry;
 
   const TokenData({
     required this.token,

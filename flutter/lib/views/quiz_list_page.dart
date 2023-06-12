@@ -16,11 +16,15 @@ class QuizListView extends StatefulWidget {
 
 class _QuizListViewState extends State<QuizListView> {
   late QuizListController _controller;
+  late Future _getSignDataFuture;
 
   @override
   void initState() {
     super.initState();
     _controller = QuizListController(callback, widget.isEditing, userQuizListData: widget.quizList);
+    if(widget.isEditing) {
+      _getSignDataFuture = _controller.getSignData();
+    }
   }
 
   @override
@@ -40,8 +44,7 @@ class _QuizListViewState extends State<QuizListView> {
         actions: [
           IconButton(
               onPressed: () {
-                var userDataQuizList = _controller.saveList();
-                Navigator.pop(context, userDataQuizList);
+                _controller.saveList().then((userQuizList) => Navigator.pop(context, userQuizList));
               },
               icon: const Icon(Icons.save))
         ],
@@ -72,7 +75,7 @@ class _QuizListViewState extends State<QuizListView> {
               width: double.infinity,
               child: ElevatedButton(
                   onPressed: () => searchDialogBuilder(context, isAddingSign: _controller),
-                  child: const Text('Add a sign')),
+                  child: Text(AppLocalizations.of(context)!.addSign)),
             ),
           )
         ],
@@ -81,22 +84,31 @@ class _QuizListViewState extends State<QuizListView> {
   }
 
   Widget _showListView() {
-    return ListView.builder(
-        itemCount: _controller.listsLength,
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text(_controller.listsTitle(index)),
-              trailing: IconButton(
-                onPressed: () {
-                  _controller.removeSign(index);
-                },
-                icon: const Icon(Icons.delete),
-              ),
-            ),
-          );
-        });
+    return FutureBuilder(
+      future: _getSignDataFuture,
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if(snapshot.connectionState != ConnectionState.done){
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return ListView.builder(
+            itemCount: _controller.listsLength,
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            itemBuilder: (context, index) {
+              return Card(
+                child: ListTile(
+                  title: Text(_controller.listsTitle(index)),
+                  trailing: IconButton(
+                    onPressed: () {
+                      _controller.removeSign(index);
+                    },
+                    icon: const Icon(Icons.delete),
+                  ),
+                ),
+              );
+            });
+      },
+    );
   }
 
   void callback() => setState(() {});

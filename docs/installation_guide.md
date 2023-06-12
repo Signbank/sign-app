@@ -95,3 +95,21 @@ If you're not sure which IDE to use, no worries! We recommend [PyCharm](https://
    
 0. Edit and save the documentation markdown files and see you changes at http://localhost:8000/.
 
+
+### Server
+
+0. Follow [these](https://ponyland.science.ru.nl/ponyland/websites/containers/) steps to setup apache on the LXD container. On step 7 add the folliwing line instead of the one in the guide:
+
+```
+ProxyPass /api http:localhost:8000/
+```
+
+This redirects all api traffic to Django localhost.
+
+0. Build a Flutter web app with the following command:
+```
+flutter build web
+```
+
+0. Place the contents of the flutter web build on the server in the */var/www/html* directory and remove the default index.html.
+

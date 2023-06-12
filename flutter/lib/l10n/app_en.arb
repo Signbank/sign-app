@@ -39,6 +39,7 @@
     "emptyRepeatPassword": "Please repeat your password",
     "invalidEmail": "Please enter a valid email address",
     "invalidPassword": "Password must be at least 6 characters long",
-    "passwordDoNotMatch": "The passwords do not match"
-
+    "passwordDoNotMatch": "The passwords do not match",
+    "addSign": "Add sign",
+    "loginHomepageText": "It seems that you are not logged in.\nPlease login to make and learn from you personal list of gestures"
 }

@@ -20,9 +20,11 @@ class TokenHelper {
     SharedPreferences.getInstance().then((sharedPreferences) {
       sharedPreferences.setString(_tokenKey, "Token ${tokenData.token}");
 
-      if(tokenData.expiry.isNotEmpty){
-        sharedPreferences.setString(_expiryKey, tokenData.expiry);
-        return;
+      if(tokenData.expiry != null) {
+        if (tokenData.expiry.isNotEmpty) {
+          sharedPreferences.setString(_expiryKey, tokenData.expiry);
+          return;
+        }
       }
 
       sharedPreferences.setString(_expiryKey, DateTime.now().toString());

@@ -6,35 +6,39 @@ import 'package:sign_app/url_config.dart';
 class QuizListController extends Controller {
   QuizListController(this._callback, this._isEditing,
       {UserQuizListData? userQuizListData})
-      : _userQuizListData = userQuizListData ?? UserQuizListData(
-      id: 0,
-      userId: 1,
-      lastPracticedDate: DateTime.now(),
-      lastPracticedIndex: 0,
-      name: '',
-      signIDs: []);
+      : _userQuizListData = userQuizListData ??
+            UserQuizListData(
+                id: 0,
+                userId: 1,
+                lastPracticedDate: DateTime.now(),
+                lastPracticedIndex: 0,
+                name: '',
+                signIDs: []);
 
   final UserQuizListData _userQuizListData;
-  late List<Sign> _signs;
+  final List<Sign> _signs = List.empty(growable: true);
   final Function _callback;
   final bool _isEditing;
   final _endpointUrl = "/user-quiz-lists/";
 
-  UserQuizListData saveList() {
-    //TODO: add correct user id
+  Future<UserQuizListData> saveList() async {
     if (_isEditing) {
-      super.putRequest(
+      return await super.putRequest(
           url: "$signAppBaseUrl$_endpointUrl${_userQuizListData.id}/",
           body: _userQuizListData,
           fromJsonFunction: UserQuizListData.fromJson);
-    } else {
-      super.postRequest(
-          url: signAppBaseUrl + _endpointUrl,
-          body: _userQuizListData,
-          fromJsonFunction: UserQuizListData.fromJson);
     }
+    return await super.postRequest(
+        url: signAppBaseUrl + _endpointUrl,
+        body: _userQuizListData,
+        fromJsonFunction: UserQuizListData.fromJson,
+        requiresCredentials: true);
+  }
 
-    return _userQuizListData;
+  Future<void> getSignData() async {
+    const endpointUrl = '/dictionary/gloss/api/';
+    List<Sign> signData = await super.postRequest(url: signBankBaseUrl+endpointUrl, fromJsonFunction: Sign.listFromJson, body: _userQuizListData.signIDs);
+    _signs.addAll(signData);
   }
 
   ///Getters
@@ -48,6 +52,7 @@ class QuizListController extends Controller {
 
   ///Setters
   void addSign(Sign sign) {
+    _signs.add(sign);
     _userQuizListData.signIDs.add(sign.id);
     _callback();
   }
