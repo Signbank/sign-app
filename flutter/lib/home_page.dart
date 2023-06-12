@@ -20,7 +20,7 @@ enum ListMenuItems { edit, delete }
 
 class _HomePageState extends State<HomePage> {
   late HomePageController _controller;
-  late Future<Widget> _setupBodyFuture;
+  late Future<bool> _setupBodyFuture;
 
   @override
   void initState() {
@@ -39,27 +39,29 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.of(context)
                     .push(MaterialPageRoute(
-                    builder: (context) => const LoginPage()))
+                        builder: (context) => const LoginPage()))
                     .then((value) => setState(() {
-                  _setupBodyFuture = _setUpBody();
-                }));
+                          _setupBodyFuture = _setUpBody();
+                        }));
               },
               icon: const Icon(Icons.person)),
         ],
       ),
       body: FutureBuilder(
         future: _setupBodyFuture,
-        builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-          if(snapshot.connectionState != ConnectionState.done){
-            return const Center(child: CircularProgressIndicator(),);
-          }
-
-            Widget? widgetBody = snapshot.data;
-            if(widgetBody == null){
-              throw Exception("Something went wrong!");
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            bool isLoggedIn = snapshot.data ?? false;
+            if (isLoggedIn) {
+              return _listBody();
             }
 
-          return widgetBody;
+            return _loginBody();
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -70,49 +72,34 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<Widget> _setUpBody() async {
+  Future<bool> _setUpBody() async {
     String token = await TokenHelper().getToken();
 
-    if(token.isEmpty){
-      return _loginBody();
+    if (token.isEmpty) {
+      return false;
     }
 
     await _controller.fetchListData();
 
-    return _listBody();
+    return true;
   }
 
   Widget _lastPracticedList() {
-    if (_controller.lastPracticedListData.id == 0) {
-      return Column(
-        children: [
-          ElevatedButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(
-                    builder: (context) => const LoginPage()))
-                    .then((value) => setState(() {
-                  // _tokenFuture = TokenHelper().getToken();
-                }));
-              },
-              child: Text(
-                AppLocalizations.of(context)!.login,
-              )),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              _controller.fetchListData();
-            },
-          ),
-        ],
-      );
+    if (_controller.lastPracticedListData == null) {
+      return Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            AppLocalizations.of(context)!.emptyRecentQuizText,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ));
     }
     return InkWell(
       onTap: () {
         Navigator.of(context)
             .push(MaterialPageRoute(
                 builder: (context) => QuizView(
-                      userQuizListData: _controller.lastPracticedListData,
+                      userQuizListData: _controller.lastPracticedListData!,
                     )))
             .then((value) => setState(() {
                   _controller.setMostRecentQuiz();
@@ -201,9 +188,11 @@ class _HomePageState extends State<HomePage> {
               )),
           TextButton(
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const RegisterPage())).then((value){
-                   _setupBodyFuture = _setUpBody();
+              Navigator.of(context)
+                  .push(MaterialPageRoute(
+                      builder: (context) => const RegisterPage()))
+                  .then((value) {
+                _setupBodyFuture = _setUpBody();
               });
             },
             child: Text(AppLocalizations.of(context)!.createAnAccount),
@@ -225,9 +214,13 @@ class _HomePageState extends State<HomePage> {
                     .push(MaterialPageRoute(
                         builder: (context) => const QuizListView()));
 
-                if (userListData != null) {
-                  _controller.addList(userListData);
-                }
+                setState(() {
+                  if (userListData != null) {
+                    _controller.addList(userListData);
+                  }
+
+                  _controller.setMostRecentQuiz();
+                });
               },
               icon: const Icon(Icons.add)),
           title: Text(
@@ -250,7 +243,9 @@ class _HomePageState extends State<HomePage> {
                                     userQuizListData:
                                         _controller.getUserQuizListData(index),
                                   )))
-                          .then((value) => setState(() {}));
+                          .then((value) => setState(() {
+                                _controller.setMostRecentQuiz();
+                              }));
                     },
                     title: Text(_controller.listsTitle(index)),
                     trailing: PopupMenuButton<ListMenuItems>(
@@ -281,8 +276,10 @@ class _HomePageState extends State<HomePage> {
                                     )));
                             break;
                           case ListMenuItems.delete:
-                            _controller.deleteList(index);
-                            _controller.getLastPracticedList();
+                            setState(() {
+                              _controller.deleteList(index);
+                              _controller.setMostRecentQuiz();
+                            });
                             break;
                         }
                       },

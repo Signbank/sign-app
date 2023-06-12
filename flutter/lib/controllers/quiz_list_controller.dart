@@ -52,14 +52,25 @@ class QuizListController extends Controller {
 
   ///Setters
   void addSign(Sign sign) {
+    for(var element in _signs){
+      if(element.id == sign.id){
+        return;
+      }
+    }
     _signs.add(sign);
     _userQuizListData.signIDs.add(sign.id);
     _callback();
   }
 
-  void removeSign(int index) {
+  bool removeSign(int index) {
+    if(_userQuizListData.signIDs.length <=1){
+      return false;
+    }
+
     _signs.removeAt(index);
+    _userQuizListData.signIDs.removeAt(index);
     _callback();
+    return true;
   }
 
   set setQuizListName(String name) => _userQuizListData.name = name;

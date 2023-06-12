@@ -8,17 +8,7 @@ class HomePageController extends Controller {
   final Function _callback;
   List<UserQuizListData> _lists = List.empty(growable: true);
   final _endpointUrl = "/user-quiz-lists/";
-  late UserQuizListData _mostRecentQuiz = UserQuizListData(
-      id: 0,
-      userId: 0,
-      name: '',
-      signIDs: [],
-      lastPracticedDate: DateTime.now(),
-      lastPracticedIndex: 0);
-
-  void getLastPracticedList() {
-    _callback();
-  }
+  UserQuizListData? _mostRecentQuiz;
 
   Future<void> fetchListData() async {
     var returnData = await super.getRequest(
@@ -34,10 +24,16 @@ class HomePageController extends Controller {
   }
 
   void setMostRecentQuiz() {
-    _mostRecentQuiz = _lists.first;
+    if(_lists.isEmpty){
+      _mostRecentQuiz = null;
+      return;
+    }
+
+    _mostRecentQuiz ??= _lists.first;
+
     for (var element in _lists) {
       if (element.lastPracticedDate
-          .isBefore(_mostRecentQuiz.lastPracticedDate)) {
+          .isAfter(_mostRecentQuiz!.lastPracticedDate)) {
         _mostRecentQuiz = element;
       }
     }
@@ -51,12 +47,12 @@ class HomePageController extends Controller {
   }
 
   ///Getters
-  String get lastPracticedListName => _mostRecentQuiz.name;
+  String get lastPracticedListName => _mostRecentQuiz != null ? _mostRecentQuiz!.name : "";
 
-  double get lastPracticedListProgression =>
-      (_mostRecentQuiz.lastPracticedIndex / _mostRecentQuiz.signIDs.length);
+  double get lastPracticedListProgression => _mostRecentQuiz != null ?
+      (_mostRecentQuiz!.lastPracticedIndex / _mostRecentQuiz!.signIDs.length) : 0.0;
 
-  UserQuizListData get lastPracticedListData => _mostRecentQuiz;
+  UserQuizListData? get lastPracticedListData => _mostRecentQuiz;
 
   int get listsLength => _lists.length;
 

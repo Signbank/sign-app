@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sign_app/controllers/quiz_list_controller.dart';
+import 'package:sign_app/error_handling.dart';
 import 'package:sign_app/models/user_quiz_list_data.dart';
 import 'package:sign_app/views/search_dialog.dart';
 
@@ -16,7 +17,7 @@ class QuizListView extends StatefulWidget {
 
 class _QuizListViewState extends State<QuizListView> {
   late QuizListController _controller;
-  late Future _getSignDataFuture;
+  Future _getSignDataFuture = Future(() => null);
 
   @override
   void initState() {
@@ -100,7 +101,11 @@ class _QuizListViewState extends State<QuizListView> {
                   title: Text(_controller.listsTitle(index)),
                   trailing: IconButton(
                     onPressed: () {
-                      _controller.removeSign(index);
+                      bool deletedSuccessful = _controller.removeSign(index);
+
+                      if(!deletedSuccessful){
+                        ErrorHandling().showError(AppLocalizations.of(context)!.emptyQuiz, ErrorLevel.warning);
+                      }
                     },
                     icon: const Icon(Icons.delete),
                   ),

@@ -6,7 +6,9 @@ import 'package:sign_app/url_config.dart';
 import 'package:sign_app/views/quiz_notification_view.dart';
 
 class QuizController extends Controller {
-  QuizController(this._callback, this._userQuizListData);
+  QuizController(this._callback, this._userQuizListData) {
+    _userQuizListData.lastPracticedDate = DateTime.now();
+  }
 
   final Function _callback;
   final UserQuizListData _userQuizListData;
@@ -27,10 +29,10 @@ class QuizController extends Controller {
 
     const endpointUrl = '/dictionary/gloss/api/';
     late List<Sign>? signData;
-      signData = await super.postRequest(
-          url: signBankBaseUrl + endpointUrl,
-          fromJsonFunction: Sign.listFromJson,
-          body: _userQuizListData.signIDs);
+    signData = await super.postRequest(
+        url: signBankBaseUrl + endpointUrl,
+        fromJsonFunction: Sign.listFromJson,
+        body: _userQuizListData.signIDs);
 
     if (signData != null) {
       _signList = signData;
