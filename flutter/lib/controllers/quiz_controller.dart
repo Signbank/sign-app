@@ -47,9 +47,6 @@ class QuizController extends Controller {
   }
 
   void updateQuizData() {
-    _userQuizListData.lastPracticedIndex += _currentSignIndex;
-    _userQuizListData.lastPracticedDate = DateTime.now();
-
     super.putRequest(
         url: "$signAppBaseUrl$_endpointUrl${_userQuizListData.id}/",
         body: _userQuizListData,
@@ -100,6 +97,10 @@ class QuizController extends Controller {
   }
 
   void nextSign(BuildContext context) {
+    if (_userQuizListData.lastPracticedIndex <
+        _userQuizListData.signIDs.length) {
+      _userQuizListData.lastPracticedIndex++;
+    }
     // If the user is not at the end of the list increment the index and update the view
     if (_currentSignIndex < _signList.length - 1) {
       _currentSignIndex++;
