@@ -113,10 +113,7 @@ class _QuizViewState extends State<QuizView> {
                 title: Center(
                     child: Text(
                   _controller.multipleChoiceOptions[index],
-                  style: TextStyle(
-                      color: backgroundColor != Colors.white
-                          ? Colors.white
-                          : Colors.black),
+                      style: backgroundColor != Theme.of(context).scaffoldBackgroundColor ? const TextStyle(color: Colors.white):null,
                 )),
               ),
             );
@@ -136,7 +133,11 @@ class _QuizViewState extends State<QuizView> {
       }
     }
 
-    return Colors.white;
+    if(MediaQuery.of(context).platformBrightness == Brightness.dark){
+      return Colors.grey.shade800;
+    }
+
+    return Theme.of(context).scaffoldBackgroundColor;
   }
 
   void callback() => setState(() {});

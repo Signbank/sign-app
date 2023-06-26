@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 bool _signAppLocalhost = true;
-bool _signBankLocalhost = true;
+bool _signBankLocalhost = false;
 
 const String _signAppBaseUrl = 'https://signapp.cls.ru.nl/api';
 const String signAppLocalHostUrl = 'http://10.0.2.2:8000';
