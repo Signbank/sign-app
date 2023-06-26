@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:sign_app/error_handling.dart';
 import 'package:sign_app/token_helper.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 abstract class Controller {
   late Client client = Client();
@@ -115,11 +116,12 @@ abstract class Controller {
         switch (response.statusCode) {
           case 401:
             headers[_authHeaderKey] = "";
-            continue base;
-          base:
-          default:
             var errorMessage = jsonDecode(response.body).values.first;
             throw Exception("$errorMessage");
+          default:
+            //Todo: get localizations for error messages, so it can be in the device language
+            // var errorMessage = AppLocalizations.of(context)!.somethingWentWrong;
+            throw Exception("Oops something went wrong, please try again later.");
         }
       }
 

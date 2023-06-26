@@ -43,5 +43,6 @@
     "addSign": "Add sign",
     "loginHomepageText": "It seems that you are not logged in.\nPlease login to make and learn from you personal list of signs",
     "emptyRecentQuizText": "Create a list below and start learning",
-    "emptyQuiz":"The quiz must contain at least on sign"
+    "emptyQuiz":"The quiz must contain at least on sign",
+    "somethingWentWrong": "Oops something went wrong, please try again later."
 }
