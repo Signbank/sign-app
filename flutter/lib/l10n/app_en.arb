@@ -41,7 +41,7 @@
     "invalidPassword": "Password must be at least 6 characters long",
     "passwordDoNotMatch": "The passwords do not match",
     "addSign": "Add sign",
-    "loginHomepageText": "It seems that you are not logged in.\nPlease login to make and learn from you personal list of gestures",
+    "loginHomepageText": "It seems that you are not logged in.\nPlease login to make and learn from you personal list of signs",
     "emptyRecentQuizText": "Create a list below and start learning",
     "emptyQuiz":"The quiz must contain at least on sign"
 }

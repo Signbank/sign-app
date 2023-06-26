@@ -167,25 +167,30 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Center(
+            child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Text(
+                  AppLocalizations.of(context)!.loginHomepageText,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 18),
+                )),
+          ),
           Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(
-                AppLocalizations.of(context)!.loginHomepageText,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 18),
-              )),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(
-                        builder: (context) => const LoginPage()))
-                    .then((value) => setState(() {
-                          _setupBodyFuture = _setUpBody();
-                        }));
-              },
-              child: Text(
-                AppLocalizations.of(context)!.login,
-              )),
+            padding: const EdgeInsets.all(8),
+            child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(
+                          builder: (context) => const LoginPage()))
+                      .then((value) => setState(() {
+                            _setupBodyFuture = _setUpBody();
+                          }));
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.login,
+                )),
+          ),
           TextButton(
             onPressed: () {
               Navigator.of(context)
