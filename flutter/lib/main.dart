@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sign_app/red_impact_color.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'home_page.dart';
 

@@ -43,5 +43,6 @@
     "loginHomepageText": "Het lijkt erop dat je niet bent ingelogd.\nLog alsjeblieft in om je persoonlijke lijst met gebaren te maken en van te leren",
     "emptyRecentQuizText": "Maak hieronder een lijst aan en begin met leren",
     "emptyQuiz":"De quiz moet minimaal één gebaar bevatten",
-    "somethingWentWrong": "Oeps er is iets verkeerd gegaan, probeer later nog een keer."
+    "somethingWentWrong": "Oeps er is iets verkeerd gegaan, probeer later nog een keer.",
+    "forgotPassword": "Wachtwoord vergeten"
 }

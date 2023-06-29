@@ -31,6 +31,7 @@ dependencies:
   shared_preferences: ^2.1.0
   flutter_native_splash: ^2.2.18
   flutter_launcher_icons: ^0.13.1
+  url_launcher: ^6.1.11
 
 flutter_launcher_icons:
   image_path: "assets/icons/ic_launcher.png"
