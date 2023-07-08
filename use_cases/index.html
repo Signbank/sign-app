@@ -1,0 +1,720 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../requirements/">
+      
+      
+        <link rel="next" href="../user_interface_sketches/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+    
+    
+      
+        <title>Use cases - Sign app wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.26e3688c.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ecc896b0.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="ru_red" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#use-case-description" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Sign app wiki" class="md-header__button md-logo" aria-label="Sign app wiki" data-md-component="logo">
+      
+  <img src="../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Sign app wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Use cases
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="ru_red" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Sign app wiki" class="md-nav__button md-logo" aria-label="Sign app wiki" data-md-component="logo">
+      
+  <img src="../assets/logo.png" alt="logo">
+
+    </a>
+    Sign app wiki
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../documentation/" class="md-nav__link">
+        Documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        API documentation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation_guide/" class="md-nav__link">
+        Installation guide
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../function_preview/" class="md-nav__link">
+        Function preview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../requirements/" class="md-nav__link">
+        Rrequirements
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Use cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Use cases
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#use-case-description" class="md-nav__link">
+    Use-case Description
+  </a>
+  
+    <nav class="md-nav" aria-label="Use-case Description">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#search-for-a-sign" class="md-nav__link">
+    Search for a sign
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sign-language-learning-quiz" class="md-nav__link">
+    Sign language learning quiz
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user_interface_sketches/" class="md-nav__link">
+        User interface documentation
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#use-case-description" class="md-nav__link">
+    Use-case Description
+  </a>
+  
+    <nav class="md-nav" aria-label="Use-case Description">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#search-for-a-sign" class="md-nav__link">
+    Search for a sign
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sign-language-learning-quiz" class="md-nav__link">
+    Sign language learning quiz
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>Use cases</h1>
+
+<h2 id="use-case-description">Use-case Description</h2>
+<p>Here the <a href="#high-level-use-cases">high-level use-cases</a> are described here in a fully dressed use-case form. This is done to get a better understanding of the functional requirements of the application.</p>
+<p>The fully dressed use cases presume that the user has already installed the system and accessed the home page.</p>
+<h3 id="search-for-a-sign">Search for a sign</h3>
+<p>Below, you find the use-case <em>"Search for a sign,"</em> which consists of two parts: searching for a sign with a word and searching for a sign through the use of hand shapes and location of the hands.</p>
+<h4 id="search-for-a-sign-with-a-word">Search for a sign with a word</h4>
+<p>The user wants to translate a word from their language into their chosen sign language.</p>
+<table>
+<tbody>
+  <tr>
+    <td><b>Primary actor</b></td>
+    <td colspan="2">User</td>
+  </tr>
+  <tr>
+    <td><b>Brief Description</b></td>
+    <td colspan="2">The user wants to know how to do a specific word in a sign language. So the user searches for that word and gets a list of videos back depicting how to perform that sign.</td>
+  </tr>
+  <tr>
+    <td><b>Pre conditions</b></td>
+    <td colspan="2">The user has access to the system and the system is functional.</td>
+  </tr>
+  <tr>
+    <td><b>Post conditions</b></td>
+    <td colspan="2">The user can view a video of the selected sign.</td>
+  </tr>
+  <tr>
+    <td><b>Main Succes Scenario</b></td>
+    <td><b>Actor Action</b></td>
+    <td><b>System Responsibility</b></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>1. The user selects the search button. </td>
+    <td>2. The system shows an input field. </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>3. The user enters their search query in the input field.</td>
+    <td>4. The system shows a list with all the signs that match the search query.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>5. The user selects one of the signs from the list.</td>
+    <td>6. The system shows the video of the selected sign.</td>
+  </tr>
+  <tr>
+    <td><b>Alternative Scenario</b></td>
+    <td></td>
+    <td>4a. The system can't find any signs matching the search query and informs the user.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>4b. The user stops searching or tries again and then the use case continues at step 1.</td>
+    <td></td>
+  </tr>
+</tbody>
+</table>
+
+<h4 id="search-for-a-sign-by-its-properties">Search for a sign by its properties</h4>
+<p>The user wants to know the meaning of a sign.</p>
+<table>
+<tbody>
+  <tr>
+    <td><b>Primary actor</b></td>
+    <td colspan="2">User</td>
+  </tr>
+  <tr>
+    <td><b>Brief Description</b></td>
+    <td colspan="2">The user wants to know the meaning of a sign in their language. The user can search for the sign by giving information of the sign like the location, number of hands, movement direction and hand shape. If all these criteria match a specific sign the user will be redirected to a video page of the selected sign.</td>
+  </tr>
+  <tr>
+    <td><b>Pre conditions</b></td>
+    <td colspan="2">The user has access to the system and the system is functional.</td>
+  </tr>
+  <tr>
+    <td><b>Post conditions</b></td>
+    <td colspan="2">The user can view a video of the selected sign.</td>
+  </tr>
+  <tr>
+    <td><b>Main Succes Scenario</b></td>
+    <td><b>Actor Action</b></td>
+    <td><b>System Responsibility</b></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>1. The user navigates to the correct search page.</td>
+    <td>2. The system shows multiple options for the location where the sign could take place, such as the head or the stomach.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>3. The user selects a location.</td>
+    <td>4. The system asks how many hands where used for the sign.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>5. The user gives the amount of hands used.</td>
+    <td>6. The system shows different movement directions for the sign.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>7. The user selects a movement direction that corresponds to the sign.</td>
+    <td>8. The system shows multiple hand shapes that could be used in the sign.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>9. The user selects a hand shape.</td>
+    <td>10. The system shows information of the sign that matches the given input.</td>
+  </tr>
+  <tr>
+    <td><b>Alternative Scenario</b></td>
+    <td></td>
+    <td>4a/6a/8a The system has found a limited number of signs matching the given input and shows a list of these signs instead of asking for more options.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>4b/6b/8b The user selects a sign from the list.</td>
+    <td>4c/6c/8c The system shows information of that sign.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td>10a. The can't find any signs matching the given input.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td>10b. The system discards the last given input and shows all the now matching signs. If there are no matching sign the system repeats this step.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>10c. The user selects a sign from the given list. If no signs match the users intent than the user can stop searching or tries again and the use case starts at step 1.</td>
+    <td></td>
+  </tr>
+</tbody>
+</table>
+
+<h3 id="sign-language-learning-quiz">Sign language learning quiz</h3>
+<table>
+<tbody>
+  <tr>
+    <td><b>Primary actor</b></td>
+    <td colspan="2">User</td>
+  </tr>
+  <tr>
+    <td><b>Brief Description</b></td>
+    <td colspan="2">
+    The user can access a list of signs and select which signs they want to practice.
+    The quiz will present a series of questions, each showing a sign, and the user must select the correct meaning from a list of multiple-choice answers.
+    After each question, the quiz will provide feedback to the user, indicating whether their answer was correct or incorrect, and will also provide the correct answer if the user answered incorrectly.
+    If users make mistakes during the quiz, they have the opportunity to retry those signs once the quiz is finished.
+    </td>
+  </tr>
+  <tr>
+    <td><b>Pre conditions</b></td>
+    <td colspan="2">The user has access to a list of signs to learn.</td>
+  </tr>
+  <tr>
+    <td><b>Post conditions</b></td>
+    <td colspan="2">The user progression of the selected list is saved.</td>
+  </tr>
+  <tr>
+    <td><b>Main Succes Scenario</b></td>
+    <td><b>Actor Action</b></td>
+    <td><b>System Responsibility</b></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>1. The user navigates to the sign list page.</td>
+    <td>2. The system shows with all the list available to the user.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>3. The user selects a list from which they would like to learn the signs.</td>
+    <td>4. The system navigates to the quiz page of the first new sign.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td>5. The system shows a video and asks the user to identify the sign in the video.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>6. The user tries to identify the sign.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>7. The user confirms their selection.</td>
+    <td>8. The system shows that the selection of the user was correct.</td>
+  </tr>
+  <tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td>9. The system asks the users if they would like to continue.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>10. The user confirms that they would like to continue.</td>
+    <td>11. The system goes to the next sign in the list. The use case continues at step 5.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td>12. The system will indicate to the user that they have completed the list once they have viewed all signs.</td>
+  </tr>
+  <tr>
+    <td><b>Alternative Scenario</b></td>
+    <td></td>
+    <td>8a. The system shows that the selection of the user is wrong and adds this sign to a list of signs that the user did not get right.</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td>12a. The system navigates to the first sign the user got wrong. The use case continues at step 5 and repeats for all the signs the user got wrong.</td>
+  </tr>
+</tbody>
+</table>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
+      
+    
+  </body>
+</html>
