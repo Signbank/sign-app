@@ -4,8 +4,11 @@ nav:
   - Home: index.md
   - Documentation: documentation.md
   - API documentation: api.md
-  - User interface documentation: user_interface_sketches.md
   - Installation guide: installation_guide.md
+  - Function preview: function_preview.md
+  - Rrequirements: requirements.md
+  - Use cases: use_cases.md
+  - User interface documentation: user_interface_sketches.md
 
 theme:
   name: 'material'
