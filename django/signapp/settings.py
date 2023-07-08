@@ -5,6 +5,7 @@ The SECRET_KEY is stored in a .env file in the same folder as this file
 import os
 
 from pathlib import Path
+from datetime import timedelta
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -26,8 +27,10 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'dictionary',
+    'quiz',
+    'accounts',
     'rest_framework',
+    'knox',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,6 +48,17 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'knox.auth.TokenAuthentication',
+    ]
+}
+
+REST_KNOX = {
+  'TOKEN_TTL': None,
+  'AUTO_REFRESH': True,
+}
 
 ROOT_URLCONF = 'signapp.urls'
 
@@ -96,13 +110,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Email settings
+DEFAULT_FROM_EMAIL = 'ocrasborn@science.ru.nl'
+EMAIL_HOST = 'smtp.science.ru.nl'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Amsterdam'
 
 USE_I18N = True
 

@@ -36,9 +36,9 @@ For other items, see the options below.
   <div class="grid-item">
     <div class="card">
       <div class="container">
-        <h4><b>Road map</b></h4>
-        <p>For a idea of all upcomming features and bug fixes see the project pages.</p>
-        <a href="https://github.com/orgs/Signbank/projects/2">Project &#10548;</a>
+        <h4><b>Functionality preview</b></h4>
+        <p>For an idea of all the existing features see this page.</p>
+        <a href="function_preview">Functionality preview &#10548;</a>
       </div>
     </div> 
   </div>

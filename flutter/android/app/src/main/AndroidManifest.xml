@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="nl.ru.sign_app">
    <application
-        android:label="sign_app"
+        android:label="NGT Signbank"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
